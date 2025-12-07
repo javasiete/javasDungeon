@@ -1,1 +1,129 @@
-<h1>El jueguito de Javi</h1>
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Dungeon's Java</title>
+
+        <!-- Link a los iconitos -->
+        <script src="https://kit.fontawesome.com/c3d324dd6f.js" crossorigin="anonymous"></script>
+
+        <!-- Link a los Estilos en CSS -->
+        <link rel="stylesheet" href="./Styles/crearJugador.css"/>
+
+    </head>
+
+    <body>
+
+        <h1>Crear tu Personaje</h1>
+    
+        <div class="seccion">
+    
+            <label>Nombra al personaje o seleccione uno ya creado</label>
+            <div id="divNombrePj">
+                <input type="text" id="nombrePJ" placeholder="Escriba aqui...">
+                <button id="seleccionarPj">Pj Creados</button>
+            </div>
+    
+            <!-- SEXO -->
+            <label>Marque su Género</label>
+            <div class="opciones" id="opcionesSexo">
+                <button data-sexo="Masculino">Masculino</button>
+                <button data-sexo="Femenino">Femenino</button>
+            </div>
+    
+            <!-- CLASE -->
+            <label>Seleccione su Clase</label>
+    
+            <div id="opcionesClase">
+    
+                <div class="cartaClase" data-clase="Guerrero">
+                    <h3>
+                        <img src="/imgs/iconos/clases/Guerrero.png" alt="Guerrero" class="iconoClase">
+                        Guerrero
+                    </h3>
+                    <div class="statsClase">
+                        <p><span>PV:</span> 25</p>
+                        <p><span>PM:</span> 10</p>
+                        <p><span>Fuerza:</span> 3</p>
+                        <p><span>Defensa:</span> 2</p>
+                        <p><span>Poder Mágico:</span> 0</p>
+                        <p><span>Def. Mágica:</span> 1</p>
+                        <p><span>Velocidad:</span> 2</p>
+                    </div>
+                </div>
+    
+                <div class="cartaClase" data-clase="Paladin">
+                    <h3>
+                        <img src="/imgs/iconos/clases/Paladin.png" alt="Paladin" class="iconoClase">
+                        Paladin
+                    </h3>
+                    <div class="statsClase">
+                        <p><span>PV:</span> 28</p>
+                        <p><span>PM:</span> 12</p>
+                        <p><span>Fuerza:</span> 2</p>
+                        <p><span>Defensa:</span> 3</p>
+                        <p><span>Poder Mágico:</span> 1</p>
+                        <p><span>Def. Mágica:</span> 2</p>
+                        <p><span>Velocidad:</span> 1</p>
+                    </div>
+                </div>
+    
+                <div class="cartaClase" data-clase="Clerigo">
+                    <h3>
+                        <img src="/imgs/iconos/clases/Clerigo.png" alt="Clerigo" class="iconoClase">
+                        Clérigo
+                    </h3>
+                    <div class="statsClase">
+                        <p><span>PV:</span> 20</p>
+                        <p><span>PM:</span> 15</p>
+                        <p><span>Fuerza:</span> 2</p>
+                        <p><span>Defensa:</span> 1</p>
+                        <p><span>Poder Mágico:</span> 2</p>
+                        <p><span>Def. Mágica:</span> 1</p>
+                        <p><span>Velocidad:</span> 2</p>
+                    </div>
+                </div>
+    
+                <div class="cartaClase" data-clase="Hechicero">
+                    <h3>
+                        <img src="/imgs/iconos/clases/Hechicero.png" alt="Hechicero" class="iconoClase">
+                        Hechicero
+                    </h3>
+                    <div class="statsClase">
+                        <p><span>PV:</span> 15</p>
+                        <p><span>PM:</span> 20</p>
+                        <p><span>Fuerza:</span> 1</p>
+                        <p><span>Defensa:</span> 0</p>
+                        <p><span>Poder Mágico:</span> 3</p>
+                        <p><span>Def. Mágica:</span> 1</p>
+                        <p><span>Velocidad:</span> 1</p>
+                    </div>
+                </div>
+    
+            </div>
+    
+            <button id="btnCrear">Crear Personaje</button>
+
+            <!--POPUP ELEGIR PERSONAJE YA CREADO-->
+            <div id="popupElegirPj" style="display:none">
+                <div id="popupVentanaElegirPj">
+                    <div id="mostradoPersonajes"></div>
+                    <div id="cerrarPopupElegirPj">Cerrar</div>
+                </div>
+            </div>
+
+            <!--POPUP CONFIRMAR CREACION-->
+            <div id="popupFondoCreacion" style="display:none">
+                <div id="popupVentanaCreacion">
+                    <div id="infoCreacion" class="popupOpcion"></div>
+                </div>
+            </div>
+    
+        </div>
+    
+        <script src="javascript/crearJugador.js"></script>
+    
+    </body>
+
+</html>

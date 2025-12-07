@@ -1,0 +1,1302 @@
+/* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+*/
+
+body {
+    background: rgb(17, 17, 17);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+button {
+    padding: 10px 20px;
+    font-size: 18px;
+    cursor: pointer; 
+    border-radius: 5px;
+}
+
+/*---------------------------------------------------------------------------------------------------------------------*/
+/*PAGINA PRINCIPAL*/
+
+#paginaPrincipal {
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    color: white;
+}
+
+/* CONTENEDOR */
+#divBotones {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+/* BOTÓN */
+.bntPagDirecciones {
+    display: flex;
+    align-items: center;
+    width: 260px; /* ancho fijo para que todos coincidan */
+    padding: 10px 20px;
+    border: 2px solid #333;
+    background-color: #e7e7e7;
+    color: black;
+    transition: 0.2s;
+    font-weight: bold;
+}
+
+/* HOVER */
+.bntPagDirecciones:hover {
+    background-color: #d3d2d2;
+    transform: scale(1.03);
+}
+
+/* ========  ICONO  ======== */
+.iconoBoton {
+    width: 32px;
+    height: 32px;
+    object-fit: contain;
+    flex-shrink: 0;  /* evita que se deforme */
+}
+
+/* ========  LINEA DIVISORIA  ======== */
+.lineaDivisoria {
+    width: 2px;
+    height: 30px;
+    background-color: #444;
+    margin: 0 12px;
+    flex-shrink: 0;
+}
+
+/* ========  TEXTO  ======== */
+.textoBoton {
+    flex-grow: 1;    /* ocupa todo el resto del botón */
+    text-align: left; /* empieza desde la línea divisoria */
+}
+
+
+/*---------------------------------------------------------------------------------------------------------------------*/
+/*PAGINA STATUS*/
+
+/* ============================= */
+/* SOLAPAS */
+/* ============================= */
+#solapas {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.solapa {
+    padding: 8px 20px;
+    margin: 5px;
+    border: 2px solid black;
+    background-color: #c0c0c0; /* ← gris apagado para solapas inactivas */
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.solapa.activa {
+    background-color: #fffd8b; /* ← mismo color que las cartas activas */
+}
+
+
+/* ============================= */
+/* LAYOUT GENERAL IZQ + DER */
+/* ============================= */
+
+#contenidoSolapas {
+    display: flex;
+    width: 900px;
+    height: 350px; /* ← altura fija para toda la pantalla de status */
+    box-sizing: border-box;
+}
+
+/* ============================= */
+/* COLUMNA IZQUIERDA (CARTAS) */
+/* ============================= */
+
+#divIzquierdoCaract {
+    width: 300px;
+    height: 100%;            /* ← altura fija igual al contenedor */
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    justify-content: flex-start;
+    box-sizing: border-box;
+    padding-right: 0;
+    overflow: hidden;        /* ← evita que se estire si algo rompe */
+}
+
+/* ============================= */
+/* COLUMNA DERECHA */
+/* ============================= */
+
+#tabCaract,
+#tabObjetos,
+#tabHechizos,
+#tabExperiencia {
+    flex: 1;
+    display: none;
+    flex-direction: column;
+}
+
+/* Panel derecho */
+#divDerechoCaract,
+#divDerechoObjetos,
+#divDerechoHechizos,
+#divDerechoExperiencia {
+    background-color: #fffd8b;
+    color: black;
+    border: 2px solid black;
+    border-left: none;
+    position: relative;
+    z-index: 1;
+    padding: 15px;
+
+    width: 100%;
+    height: 100%; /* ← se mantiene igual sin importar los jugadores */
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Contenedores internos */
+#contenedorEstadisticas,
+#contenedorObjetos,
+#contenedorHechizos,
+#contenedorExperiencia {
+    border: 2px solid black;
+    background-color: rgb(226, 224, 124);
+    width: 100%;
+    height: 100%;
+    text-align: center;
+}
+
+#contenedorObjetos {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+#contenedorExperiencia {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding-top: 10px;
+}
+
+/* ============================= */
+/* CARTAS DE JUGADORES */
+/* ============================= */
+
+.cartaJugador {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+    background-color: #fffd8ba4;
+    border: 2px solid black;
+
+    cursor: pointer;
+    margin: 0;
+    padding: 0;
+
+    height: 100px;
+    z-index: 2;
+    padding-left: 8px;
+    padding-right: 8px;
+
+    position: relative;
+}
+
+/* FOTO */
+.cartaJugador .iconoJugador {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+}
+
+.cartaJugador .iconoJugador img {
+    height: 90%;
+}
+
+/* INFO */
+.cartaJugador .infoCartaJugador {
+    flex: 3;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 4px;
+    padding: 5px;
+}
+
+/* Nombre left — Nivel right */
+.filaNombreNivel {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end; /* para que ambos textos apoyen abajo */
+    width: 100%;
+    border-bottom: 2px solid black; /* ← línea inferior */
+    padding-bottom: 4px; /* opcional, para que el texto no quede pegado */
+}
+
+.nombreJugador {
+    font-weight: bold;
+    font-size: 22px;
+    text-align: left;
+}
+
+.nivelJugador {
+    text-align: right;
+}
+
+/* PV/PM left — barras right */
+.lineaStatus {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+/* Texto de PV / PM */
+.labelStatus {
+    text-align: left;
+}
+
+/* Barra de vida/maná */
+.barraContenedor {
+    width: 90px;
+    height: 10px;
+    background-color: #4b2e12;
+    border: 1px solid black;
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.barraVida {
+    height: 100%;
+    background-color: red;
+}
+
+.barraMana {
+    height: 100%;
+    background-color: #208cc2;
+}
+
+/* ============================= */
+/* TARJETA SELECCIONADA */
+/* ============================= */
+
+.cartaJugador.seleccionada {
+    background-color: #fffd8b;
+    border-top: 2px solid black;
+    border-left: 2px solid black;
+    border-bottom: 2px solid black;
+    border-right: none;
+    z-index: 3;
+}
+
+/*---------------------------------------------------------------------------------------------------------------------------------*/
+/* ============================= */
+/* TABLA PERFIL */
+/* ============================= */
+
+/* LO EQUIPADO */
+#divLoEquipado {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    padding-top: 10px;
+    gap: 10px;
+}
+
+/* Todas las cajitas iguales y cuadradas */
+.cajitaLoEquipado {
+    width: 80px;
+    height: 80px;
+    border: 1px solid black;
+    background-color: #a1a055a4;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    box-sizing: border-box;
+}
+
+.cajitasInventario {
+    width: 80px;
+    height: 80px;
+    border: 1px solid black;
+    background-color: #a1a055a4;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    box-sizing: border-box;
+}
+/*------------------------------------------------*/
+/*   TOOLTIP GENERAL REUTILIZABLE   */
+
+.tooltip {
+    position: absolute;
+    background-color: rgba(0,0,0,0.85);
+    color: white;
+    padding: 4px 8px;
+    font-size: 12px;
+    border-radius: 6px;
+    pointer-events: none;
+    white-space: nowrap;
+    z-index: 9999;
+    opacity: 0;
+    transform: translate(-50%, -120%);
+    transition: opacity 0.15s ease-out;
+}
+
+/*-----------------------------------------------------*/
+/* POPUP PERFIL */
+
+#popupFondoHabilidades {
+    position: fixed;
+    top: 0; 
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+    display: none;          /* Se mostrará con display:flex */
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+#popupVentanaHabilidades {
+    background: #fff;
+    padding: 20px;
+    border: 2px solid black;
+    width: 300px;
+    text-align: center;
+    box-sizing: border-box;
+}
+
+/* Opciones dentro del popup */
+.popupOpcionHab {
+    padding: 8px;
+    cursor: pointer;
+    font-size: 18px; /*Tamaño Fuente dentro del POPUP*/
+}
+
+.popupOpcionHab:hover {
+    color: blue;
+    text-decoration: underline;
+}
+
+/* Contenedor extra para traspaso */
+#popupExtraHab {
+    margin-top: 10px;
+}
+
+/*----------------------------------------*/
+/* Hover para las cajitas de equipamiento */
+
+.cajitaEquipSlot {
+    cursor: pointer;
+    transition: filter 0.2s;
+}
+
+.cajitaEquipSlot:hover {
+    filter: brightness(1.3);
+}
+
+/* POPUP */
+#popupFondo {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background-color: rgba(0,0,0,0.5);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 999;
+}
+
+#popupVentana {
+    background: #fff;
+    padding: 20px;
+    border: 2px solid black;
+    width: 300px;
+    text-align: center;
+}
+
+.popupOpcion {
+    padding: 8px;
+    cursor: pointer;
+    font-size: 18px;
+}
+
+/* Estado bloqueado: texto rojo, sin hover */
+.popupBloqueado {
+    color: red !important;
+    cursor: default !important;
+    text-decoration: none !important;
+}
+
+.popupOpcion:not(.popupBloqueado):hover {
+    color: blue;
+    text-decoration: underline;
+}
+
+.popupOpcionBloqueada {
+    padding: 2px; /* El espacio entre Jugador.Nombre + Inventario Lleno */
+    font-size: 18px; 
+    color: red;
+    cursor: default;
+    text-decoration: none;
+}
+
+.popupInventarioLlenoAviso {
+    font-size: 18px;
+    color: red;
+    cursor: default;
+    text-decoration: none;
+    margin-top: -5px;
+}
+
+/* Me aseguro que la fuentes tengan 18px */
+#popupVentana, #popupVentanaHabilidades {
+    font-size: 18px;
+}
+
+/* -------------------------------------------- */
+/* CONTENEDOR */
+#contenedorDeTablaEst {
+    border: 2px solid rgb(51, 25, 8);
+    padding: 0px;
+    width: 75%;
+    margin: 10px auto;
+}
+
+.tablaStats {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 15px;
+}
+
+/* Cada fila en 2 columnas (nombre — valor) */
+.tablaStats tr {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+}
+
+/* CELDA DEL NOMBRE */
+.statNombre {
+    font-weight: bold;
+    padding-left: 15px;
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+    gap: 10px;
+}
+
+/* PUNTITOS ABAJO */
+.statNombre::after {
+    content: "";
+    border-bottom: 1px dotted #000;
+    flex-grow: 1;
+    margin-right: 10px;
+    position: relative;
+    bottom: 0;
+}
+
+/* CELDA DEL VALOR */
+.statValor {
+    text-align: right;
+    padding-right: 15px;
+    white-space: nowrap;
+}
+
+
+/*----------------------------------------------------------------------------------------------------------------*/
+/* TABLA DE HECHIZOS */
+.tablaHechizos {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+}
+
+.tablaHechizos th,
+.tablaHechizos td {
+    width: 25%;
+    vertical-align: top;
+    padding: 6px;
+    text-align: center;
+    border: 1px solid #00000033;
+}
+
+.filaTitulo th {
+    font-weight: bold;
+    background-color: #f0f0f0;
+}
+
+#popupCuracion {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 500;
+}
+
+.popupOculto {
+    display: none !important;
+}
+
+.popupContenido {
+    background: #fff;
+    padding: 20px;
+    border: 2px solid black;
+    width: 300px;
+    text-align: center;
+    box-sizing: border-box;
+}
+
+#listaOpcionesCurar div,
+.popupBotonCerrar {
+    padding: 8px 12px;
+    margin: 7px 0;
+    font-size: 18px; /*Tamaño Fuente dentro del POPUP*/
+    cursor: pointer;
+}
+
+#listaOpcionesCurar div:hover,
+.popupBotonCerrar:hover {
+    color: blue;
+    text-decoration: underline;
+}
+
+/*--------------------------------------------------------------------------------------------*/
+/*EFECTO CURACION*/
+
+
+.contenedorEfectoCuracion {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    overflow: visible;
+    z-index: 20;
+}
+
+/* Cruces individuales */
+.cruzCuracion {
+    position: absolute;
+    width: 18px;
+    height: 18px;
+    opacity: 0;
+    transform: translateY(0);
+    pointer-events: none;
+}
+
+/* Animación */
+@keyframes subirYDesvanecer {
+    0% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    50% {
+        opacity: 1;
+        transform: translateY(-25px);
+    }
+    100% {
+        opacity: 0;
+        transform: translateY(-55px);
+    }
+}
+
+/*--------------------------------------------------------------------------------------------------*/
+/*PESTAÑA DE MEJORAS*/
+
+.stat {
+    display: grid;
+    grid-template-columns: 140px 40px 1fr 40px 80px;
+    /*   Columna 1  2     3     4     5    */
+    align-items: center;
+    width: 100%;
+    margin-bottom: 0px;
+    gap: 10px;
+}
+
+.stat-row {
+    display: grid;
+    grid-template-columns: 140px 40px 200px 40px 80px;
+    align-items: center;
+    gap: 10px;
+    padding: 5px 0; /*Separacion entre las FILAS*/
+}
+
+.stat-label {
+    font-weight: bold;
+    text-align: right;
+    padding-right: 5px;
+}
+
+/* Botones + y - */
+.stat-row button {
+    width: 35px;
+    height: 35px;
+    font-size: 1.3em;
+    font-weight: bold;
+    cursor: pointer;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    line-height: 1; /* evita descuadres */
+    padding: 0;
+}
+
+.stat-row button:hover {
+    transform: scale(1.1);
+}
+
+.barrita {
+    display: flex;
+    gap: 2px;
+    width: 100%;
+    height: 30px;
+    background-color: #ddd;
+    border: 1px solid #aaa;
+    border-radius: 4px;
+    padding: 2px;
+}
+
+.barrita div {
+    width: 18px;
+    height: 28px;
+    background: #aaa;
+    border: 1px solid #444;
+    border-radius: 2px;
+}
+
+.barrita div.activo {
+    background-color: #37753a;
+}
+
+.barrita div.proyectado {
+    background-color: #4caf50;
+}
+
+.valorActual {
+    font-weight: bold;
+    font-size: 16px;
+    text-align: left;
+}
+.valorActual span {
+    font-size: 13px;
+    margin-left: 4px;
+}
+
+.nivel {
+    width: 30px;
+    text-align: center;
+    font-weight: bold;
+}
+
+/*--------------------------------------*/
+/*POPUP MEJORAS*/
+
+/* POPUP */
+#popupMejoras {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background-color: rgba(0,0,0,0.5);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 999;
+}
+
+#popupVentanaMejoras {
+    background: #fff;
+    padding: 20px;
+    border: 2px solid black;
+    width: 300px;
+    text-align: center;
+}
+
+/*-------------------------------------------------------------------------------------------------------------------*/
+/* ============================= */
+/* BOTÓN CERRAR */
+/* ============================= */
+#divBtnCerrarPaginaStatus {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+/*---------------------------------------------------------------------------------------------------------------------*/
+/*PAGINA TABLERO DE GUERRA*/
+
+#paginaTablero {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    background-color: transparent;
+    
+}
+
+/*--------------------------------------------*/
+
+/* LAYOUT PRINCIPAL DE BATALLA */
+#pantallaPrincipalPelea {
+    width: 860px;
+    height: 430px;
+
+    background-image: url("../imgs/tablero/fondoTablero.png"); /* ← TU IMAGEN */
+    background-size: cover;        /* ocupa todo el espacio sin deformarse */
+    background-position: center;   /* centrado */
+    background-repeat: no-repeat;  /* no se repite */
+
+    display: grid;
+    grid-template-columns: 15% 85%;
+    align-items: center;
+    justify-items: center;
+
+    padding: 0;
+}
+
+/* COLUMNA DE TURNOS */
+#divTurnos {
+    background-color: #a18833;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0;
+    position: relative; /* Necesario para posicionar la flecha dentro de este bloque */
+}
+
+/* 👇 Flecha fija apuntando al primer turno */
+#flechaTurno {
+    position: absolute;
+    top: 40px;    /* Ajusta según tu diseño final */
+    left: 10px;  /* Mueve la flecha hacia la izquierda */
+    width: 35px;  /* Tamaño aproximado, ajusta si quieres */
+    pointer-events: none; /* no bloquea clics */
+    z-index: 10;  /* se asegura que quede arriba */
+}
+
+#mostrandoTurnos {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 4px;
+
+    padding: 10px;
+    width: 70px;
+    min-height: 120px;
+    height: 100%;
+    margin-bottom: 5px;
+
+    background-color: #4b2e12;
+    border-radius: 5px;
+    box-sizing: border-box;
+    overflow: visible;
+}
+
+.iconoTurno {
+    width: 56px;
+    height: 56px;
+
+    display: block;
+    margin: 0;
+    padding: 0;
+}
+
+/*------------------------------------------------*/
+
+#tablero_y_cartas {
+    margin-top: 10px;
+    margin-bottom: 20px;
+    
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+#divParteArribaBatalla {
+    width: 100%;          /* ocupar todo el ancho */
+    height: 70px;         /* alto fijo */
+
+    display: flex;        /* para colocar las cartas en fila */
+    align-items: center;  /* centrar verticalmente las cartas dentro del div */
+    padding: 0 10px;      /* opcional: algo de espacio a los lados */
+    box-sizing: border-box; /* importante para que el padding no rompa el ancho */
+    gap: 10px;            /* espacio entre cartas si agregas varias */
+}
+
+/* CONTENEDOR DEL TABLERO */
+#tablero {
+    width: 100%;
+    display: flex;
+    justify-content: center; 
+    align-items: center;
+    overflow: visible;
+    margin-top: 5px;
+    margin-bottom: -10px;
+}
+
+/* TABLERO REAL (con 3D) */
+.tableroGuerra {
+    display: grid;
+    grid-template-columns: repeat(7, 90px);
+    grid-template-rows: repeat(3, 90px);
+
+    gap: 4px;
+    /* background: #222; */
+    padding: 10px;
+    border-radius: 8px;
+
+    /* Efecto 3D */
+    transform: perspective(900px) rotateX(12deg);
+    transform-origin: top center;
+
+    /* Evita que Grid se rompa por la deformación */
+    will-change: transform;
+}
+
+/*  CELDAS  */
+.celdaGuerra { 
+    width: 90px; 
+    height: 90px; 
+    background-color: rgba(68, 68, 68, 0.3);
+    border: 2px solid #1f1e1eb6; 
+    border-radius: 6px; 
+    position: relative; 
+    overflow: visible; 
+}
+
+
+/* SPRITE DEL PERSONAJE */
+.imgPersonaje {
+    width: 225%;
+    height: 225%;
+    object-fit: contain;
+    pointer-events: none;
+    position: relative;
+
+    transform: translate(-25%, -40%);
+}
+
+/*----------------------------------------------------------------------/
+/*CARTAS de los jugadores*/
+
+#infoJugadoresEnBatalla {
+    display: grid;
+    grid-template-columns: repeat(3, 220px); 
+    gap: 8px;
+    padding: 10px;
+    justify-content: start;
+    margin-bottom: 10px;
+}
+
+
+.tarjeta-jugador {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(20,20,20,0.7);
+    border: 2px solid #444;
+    padding: 8px 12px;
+    border-radius: 8px;
+    width: 200px;
+}
+
+.icono-jugador {
+    width: 48px;
+    height: 48px;
+    border-radius: 6px;
+}
+
+.info-jugador {
+    flex: 1;
+}
+
+.fila-texto {
+    font-size: 14px;
+    color: white;
+    margin-bottom: 4px;
+}
+
+.barra-outer {
+    width: 100%;
+    height: 10px;
+    background: #222;
+    border: 1px solid #555;
+    border-radius: 4px;
+    margin-bottom: 6px;
+    overflow: hidden;
+}
+
+.barra-inner {
+    height: 100%;
+}
+
+.barra-inner.vida {
+    background: #d62828; /* rojo */
+}
+
+.barra-inner.mana {
+    background: #457b9d; /* azul */
+}
+
+/*----------------------------------------------------------------------/
+/*Celdas que se pintan si puede moverse el jugador de casillero*/
+
+.celda-movible {
+    background-color: rgba(255, 255, 100, 0.6);
+    cursor: pointer;
+}
+
+.celda-movible:hover {
+    background-color: rgba(255, 180, 80, 0.8);
+}
+
+/* ------------------------------------------------------------------- */
+
+/* Contenedor principal dividido al 50% */
+#divBatalla {
+    display: flex;
+}
+
+/* Izquierda: menús */
+#divAcciones {
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    background: #2d2416;
+    background-size: cover;
+}
+
+/* Derecha: texto */
+#DivAccionTexto {
+    width: 50%;
+    padding: 10px;
+}
+
+/* ---- MENÚS ---- */
+
+#miniMenu_1,
+#miniMenu_2 {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    width: 90%;
+}
+
+/* Ocultar miniMenu_2 al inicio */
+#miniMenu_2 {
+    display: none;
+}
+
+/* Para que un solo botón se centre debajo */
+#miniMenu_2 button:nth-child(3) {
+    grid-column: span 2;    /* ocupa las dos columnas */
+    justify-self: center;   /* centrado */
+    width: 70%;             /* opcional: lo hago más angosto */
+}
+
+/* Caja interna con padding y borde */
+#textoDescriptivo {
+    padding: 5px;
+    border: 2px solid #333;
+    border-radius: 6px;
+    min-height: 80px;
+    background-color: #f9f9f9;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*---------------------------------------------------------------------------------------------------------------------*/
+/*VENTANA EMERGENTE DE ATAQUES*/
+
+
+/*---------------------------------------------------------------------------------------------------------------------*/
+/*PAGINA FORMACION*/
+#paginaFormacion {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+#tablaFormacion {
+    border-collapse: collapse;
+    border: 5px solid rgb(112, 60, 18);
+}
+
+.casillero-formacion {
+    width: 90px;    
+    height: 90px;
+    border: 3px solid black;
+    text-align: center;
+    vertical-align: middle;
+    position: relative;
+    padding: 0;
+    cursor: pointer;
+    background-color: #8d8c8c;
+}
+
+.icono-personaje {
+    width: 90%;          /* La imagen se adapta, sin romper el TD */
+    height: 90%;
+    object-fit: contain;
+    pointer-events: auto;
+    transition: 0.2s;
+}
+
+
+/*------------------------------------------------------------------------------------------*/
+@media screen and (max-width: 768px) {
+
+    /* ====== RESET PARA EVITAR MÁRGENES ====== */
+    body, html {
+        margin: 0;
+        padding: 0;
+        overflow-x: hidden;
+    }
+
+/*     #paginaTablero {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        background-color: transparent;
+    
+    } */
+
+    #paginaTablero {
+        display: flex;
+        align-items: flex-start; /* ← YA NO centra */
+        
+        padding: 3px;
+        margin: 0;
+        width: 100%;
+        height: 100%;
+    }
+
+    /* ====== CONTENEDOR GENERAL ====== */
+/*     #pantallaPrincipalPelea {
+        width: 100%;
+        max-width: 100%;
+        margin: 0;
+        padding: 0px;
+
+        display: grid;
+        grid-template-columns: auto 1fr;
+        gap: 0px;
+        align-items: start;
+        justify-items: stretch;
+    } */
+
+    #pantallaPrincipalPelea {
+        display: grid;
+        grid-template-columns: 15% 85%;  /* ← ajustalo como quieras */
+        grid-template-rows: auto; 
+        width: 100%;
+        min-height: 100vh;
+
+        align-items: start;   /* hijos pegados arriba */
+        justify-items: start; /* hijos pegados a la izquierda de su celda */
+
+        margin: 0;
+        padding: 0;
+    }
+
+    /* ====== COLUMNA DE TURNOS ====== */
+    #divTurnos {
+        width: 60%;
+        height: 95%;
+        
+        margin: 0px;
+        margin-top: 5px;
+        padding: 0px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    #flechaTurno {
+        top: 20px;
+        left: 4px;
+        width: 28px;
+        display: none !important;
+    }
+
+    /* ====== TABLERO Y CARTAS ====== */
+    #tablero_y_cartas {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        margin: 0;
+        padding: 0;
+    }
+
+    #divParteArribaBatalla {
+        width: 100%;
+        height: 60px;
+
+        display: flex;
+        align-items: center;
+        padding: 0 10px;
+        box-sizing: border-box;
+
+        margin-left: -50px;
+        margin-top: 30px;
+    }
+
+    #tablero {
+        margin-left: -70px;
+        margin-top: -5px;
+        padding: 0;
+        width: 100%;
+    }
+
+    .tableroGuerra {
+        grid-template-columns: repeat(7, 70px);
+        grid-template-rows: repeat(3, 70px);
+        gap: 4px;
+        padding: 10px;
+        transform: perspective(650px) rotateX(10deg);
+    }
+
+    .celdaGuerra {
+        width: 70px;
+        height: 70px;
+    }
+
+    /* ====== CARTAS DE JUGADORES ====== */
+    #infoJugadoresEnBatalla {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 4px;
+        width: 100%;
+    }
+
+    /* ====== MENÚ DE ACCIONES ====== */
+
+    #divBatalla {
+        width: 90%;
+    }
+
+    /* Quitamos la parte derecha del texto en tablet */
+    #DivAccionTexto {
+        display: none !important;
+    }
+
+    #divAcciones {
+        width: 100%;
+        height: 40%;
+        padding: 20px;  /* ← antes 6px */
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 6px;
+        margin-top: -160px; /* ← sube el menú más cerca del tablero */
+        margin-left: 68px;
+        
+    }
+
+    /* ====== BOTONES EN UNA SOLA FILA ====== */
+    #miniMenu_1 {
+        width: 100%;
+        
+        align-items: center;
+        justify-content: center;
+        gap: 7px;
+    }
+
+    #miniMenu_1 button {
+        min-width: 0;        /* <-- permite que entren sin forzar scroll */
+        padding: 0px;   /* <-- un poco menos de padding para que entren bien */
+        font-size: 0px;     /* <-- ajustado para tablets */
+        align-items: center;
+        justify-content: center;
+    }
+
+    #miniMenu_2 {
+        width: 100%;
+        display: none;  /* ← ahora SI funciona como antes */
+        justify-content: center;
+        gap: 6px;
+        flex-wrap: nowrap;
+    }
+
+    #miniMenu_1 button,
+    #miniMenu_2 button {
+        flex: 0 1 auto;
+        padding: 10px 14px;
+        font-size: 15px;
+        border-radius: 8px;
+        white-space: nowrap;
+    }
+
+    
+}
+
+
+
+/*Fin de las Mediaqueries*/

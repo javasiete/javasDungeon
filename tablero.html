@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Dungeon's Java</title>
+
+        <!-- Link a los iconitos -->
+        <script src="https://kit.fontawesome.com/c3d324dd6f.js" crossorigin="anonymous"></script>
+
+        <!-- Link a los Estilos en CSS -->
+        <link rel="stylesheet" href="./Styles/tablero.css"/>
+
+    </head>
+
+    <body>
+
+    
+        <!-- PAGINA PRINCIPAL -->
+        <div id="paginaPrincipal">
+            <h2>Pagina Principal</h2>
+            <h4 id="pisoActual"></h4>
+   
+            <div id="divBotones">
+                <button id="btnPaginaStatus" class="bntPagDirecciones">
+                    <img src="/imgs/otras/iconoStatus.png" class="iconoBoton">
+                    <div class="lineaDivisoria"></div>
+                    <span class="textoBoton">Info. Jugador</span>
+                </button>
+
+                <button id="btnPaginaFormacion" class="bntPagDirecciones">
+                    <img src="/imgs/otras/iconoFormacion.png" class="iconoBoton">
+                    <div class="lineaDivisoria"></div>
+                    <span class="textoBoton">Formación</span>
+                </button>
+
+                <button id="btnPaginaTablero" class="bntPagDirecciones">
+                    <img src="/imgs/otras/iconoBuscarPelea.png" class="iconoBoton">
+                    <div class="lineaDivisoria"></div>
+                    <span class="textoBoton">Buscar Pelea</span>
+                </button>
+            </div>
+
+            <button id="btnTesteo">testeo</button>
+
+        </div>
+
+        <!-- PAGINA STATUS -->
+        <div id="paginaStatus" style="display:none">
+            <!-- Solapas -->
+            <div id="solapas">
+                <button class="solapa activa" data-tab="caract">Perfil</button>
+                <button class="solapa" data-tab="objetos">Objetos</button>
+                <button class="solapa" data-tab="hechizos">Hechizos</button>
+                <button class="solapa" data-tab="experiencia">Mejoras</button>
+            </div>
+
+            <!-- Contenido de las solapas -->
+            <div id="contenidoSolapas">
+
+                <!-- Columna izquierda fija -->
+                <div id="divIzquierdoCaract">
+                    <div id="statusJugador1"></div>
+                    <div id="statusJugador2"></div>
+                    <div id="statusJugador3"></div>
+                </div>
+
+                <!-- TAB Perfil -->
+                <div id="tabCaract" class="tabContenido">
+                    <div id="divDerechoCaract">
+                        <div id="contenedorEstadisticas">
+                            <div id="divLoEquipado">
+                                <div id="cajitaArmaEquipada" class="cajitaLoEquipado">Arma</div>
+                                <div id="cajitaArmaduraEquipada" class="cajitaLoEquipado">Armadura</div>
+                                <div id="cajitaEscudoEquipada" class="cajitaLoEquipado">Escudo</div>
+                                <div id="cajitaCascoEquipada" class="cajitaLoEquipado">Casco</div>
+                                <div id="cajitaAccesorioEquipada" class="cajitaLoEquipado">Accesorio</div>
+                            </div>
+                            <div id="contenedorDeTablaEst">
+                                <div id="infoEstadisticas"></div>
+                            </div>
+                            
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB Objetos -->
+                <div id="tabObjetos" class="tabContenido" style="display:none">
+                    <div id="divDerechoObjetos">
+                        <div id="contenedorObjetos">
+                            <div id="inventarioJugador1"></div>
+                            <div id="inventarioJugador2"></div>
+                            <div id="inventarioJugador3"></div>
+                        </div>
+                        
+                    </div>
+                </div>
+
+                <!-- TAB Hechizos -->
+                <div id="tabHechizos" class="tabContenido" style="display:none">
+                    <div id="divDerechoHechizos">
+                        <div id="contenedorHechizos">    
+                            <div id="hechizosJugador1"></div>
+                            <div id="hechizosJugador2"></div>
+                            <div id="hechizosJugador3"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB Experiencia -->
+                <div id="tabExperiencia" class="tabContenido" style="display:none">
+                    <div id="divDerechoExperiencia">
+                        <div id="contenedorExperiencia">
+
+                            <div id="mostrarPuntosDisponibles">Puntos Disponibles: 0</div>
+
+                            <div id="divBotones_y_Stats">
+
+                                <div class="stat stat-row" data-stat="fuerza">
+                                    <div class="stat-label">Fuerza</div>
+                                    <button class="btn-restar">-</button>
+                                    <div class="barrita"></div>
+                                    <button class="btn-sumar">+</button>
+                                    <div class="valorActual"></div>
+                                </div>
+                            
+                                <div class="stat stat-row" data-stat="defensa">
+                                    <div class="stat-label">Defensa</div>
+                                    <button class="btn-restar">-</button>
+                                    <div class="barrita"></div>
+                                    <button class="btn-sumar">+</button>
+                                    <div class="valorActual"></div>
+                                </div>
+                            
+                                <div class="stat stat-row" data-stat="poderMagico">
+                                    <div class="stat-label">Poder Mágico</div>
+                                    <button class="btn-restar">-</button>
+                                    <div class="barrita"></div>
+                                    <button class="btn-sumar">+</button>
+                                    <div class="valorActual"></div>
+                                </div>
+                            
+                                <div class="stat stat-row" data-stat="defensaMagica">
+                                    <div class="stat-label">Def. Mágica</div>
+                                    <button class="btn-restar">-</button>
+                                    <div class="barrita"></div>
+                                    <button class="btn-sumar">+</button>
+                                    <div class="valorActual"></div>
+                                </div>
+                            
+                                <div class="stat stat-row" data-stat="velocidad">
+                                    <div class="stat-label">Velocidad</div>
+                                    <button class="btn-restar">-</button>
+                                    <div class="barrita"></div>
+                                    <button class="btn-sumar">+</button>
+                                    <div class="valorActual"></div>
+                                </div>
+                            
+                            </div>                            
+
+                            <button id="guardarNuevosStats">Guardar</button>
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+
+            <div id="divBtnCerrarPaginaStatus">
+                <button id="btnCerrarPaginaStatus">Cerrar</button>
+            </div>
+           
+        </div>
+
+
+        <!-- PAGINA PARA ARMAR FORMACION o TACTICA-->
+        <div id="paginaFormacion" style="display:none">
+
+            <div id="tableroFormacion"></div>
+
+            <button id="btnConfirmarFormacion">Confirmar</button>
+
+        </div>
+
+        <!-- PAGINA DE TABLERO DE BATALLA -->
+        <div id="paginaTablero" style="display:none">
+
+            <div id="pantallaPrincipalPelea">
+                <div id="divTurnos">
+                    <div id="rondaTexto">Ronda 1</div>
+                    <img id="flechaTurno" src="imgs/otras/flechaTurno.png" alt="Flecha">
+                    <div id="mostrandoTurnos"></div>
+                </div>
+
+                <div id="tablero_y_cartas">
+                    <div id="divParteArribaBatalla">
+                        <div id="infoJugadoresEnBatalla"></div>
+                    </div>
+                    <div id="tablero">
+                        <div id="tableroReal" class="tableroGuerra"></div>
+                    </div>
+                </div>
+                
+            </div>
+            
+            <div id="divBatalla">
+                <div id="divAcciones">
+                    <div id="miniMenu_1">
+                        <button id="btnRealizarAccion">Accion</button>
+                        <button id="btnMover">Moverse</button>
+                        <button id="btnAcabarTurno">Acabar Turno</button>
+                        <button id="btnHuir">Huir</button>
+                    </div>
+                    <div id="miniMenu_2">
+                        <button id="btnAtacar">Atacar</button>
+                        <button id="btnUsarItem">Usar Item</button>
+                        <button id="btnRegresar">Regresar</button>
+                    </div>                   
+                </div>
+
+                <div id="DivAccionTexto">
+                    <div id="textoDescriptivo"></div>
+                </div>
+            </div>
+            
+        </div>
+
+        <!-- VENTANA EMERGENTE CON ATAQUES -->
+        <div id="ventanaMostrarAtaques" style="display:none">
+            
+            <div id="mostrarAtaques"></div>
+            <button id="btnCancelarAtaque">Cancelar</button>
+            
+        </div>
+
+        <!--POPUP PERFIL-->
+        <div id="popupFondoHabilidades" style="display:none">
+            <div id="popupVentanaHabilidades">
+
+                <div id="popupDesequiparHab" class="popupOpcion">Desequipar</div>
+
+                <div id="popupTraspasarHab" class="popupOpcion">Traspasar</div>
+
+                <!--Contenedor para mostrar JugadoresDestino-->
+                <div id="popupExtraHab" style="display:none; margin-top:10px;"></div>
+
+                <div id="popupTirarHab" class="popupOpcion">Tirar al piso</div>
+                <div id="popupCerrarHab" class="popupOpcion">Cerrar</div>
+
+            </div>
+        </div>
+
+        <!--POPUP INVENTARIO-->
+        <div id="popupFondo">
+            <div id="popupVentana">
+
+                <div id="popupEquipar" class="popupOpcion">Equipar</div>
+
+                <div id="popupTraspasar" class="popupOpcion">Traspasar</div>
+
+                <!--Contenedor para mostrar JugadoresDestino-->
+                <div id="popupOpcionesExtra" style="display:none; margin-top:10px;"></div>
+
+                <div id="popupTirar" class="popupOpcion">Tirar al piso</div>
+                <div id="popupCerrar" class="popupOpcion">Cerrar</div>
+
+            </div>
+        </div>
+
+        <!--POPUP HECHIZOS-->
+        <div id="popupCuracion" class="popupOculto">
+            <div class="popupContenido">
+
+                <div id="nombreHechizoPop">¿A quién deseas curar?</div>
+
+                <div id="listaOpcionesCurar"></div>
+
+                <div class="popupBotonCerrar" id="btnCerrarPopupCuracion">
+                    Cancelar
+                </div>
+
+            </div>
+        </div>
+
+        <!--POPUP MEJORAS-->
+        <div id="popupMejoras">
+            <div id="popupVentanaMejoras">
+                <div id="popupTextoMejoras"></div>
+                <div id="eleccionMejoras">
+                    <button id="btnAceptarMejora">Si</button>
+                    <button id="btnCancelarMejora">Volver</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- LINK DEL SCRIPT -->
+        <script src="javascript/tablero.js"></script> <!-- Link al documento JS -->
+    </body>
+
+</html>
