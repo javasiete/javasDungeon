@@ -7,7 +7,6 @@ function capitalizarNombre(nombre = "") {
         .replace(/^\w/, c => c.toUpperCase());
 }
 
-// Funcion que importa los datos del jugador creado de la Pagina anterior:
 function actualizarJugador1ConDatosCreacion(datos) {
 
     // Crear personaje completo basado en los datos guardados
@@ -23,7 +22,6 @@ function actualizarJugador1ConDatosCreacion(datos) {
 
     // Buscar posición del jugador cuyo ID sea 1
     const index = jugadores.findIndex(j => j.id === 1);
-
     if (index === -1) {
         console.error("ERROR: No se encontró un jugador con ID 1");
         return;
@@ -32,8 +30,26 @@ function actualizarJugador1ConDatosCreacion(datos) {
     // Activar al jugador
     pjCreado.activo = true;
 
-    // Inicializar niveles de stats (muy importante)
+    // Inicializar niveles de stats
     inicializarNivelesDeStats(pjCreado);
+
+    // -------------------------------
+    // ASIGNAR ATAQUES SEGÚN CLASE
+    // -------------------------------
+    let ataqueInicialNum = 1; // default para guerrero/paladin
+    const clase = pjCreado.claseBase.toLowerCase();
+    if (clase === "clerigo" || clase === "hechicero") {
+        ataqueInicialNum = 9;
+    }
+
+    // Buscar ataque completo en ataquesDisponibles
+    const ataqueInicial = ataquesDisponibles.find(a => a.ataqueNum === ataqueInicialNum);
+    if (ataqueInicial) {
+        pjCreado.ataques = [ataqueInicial];  // ← Aquí el jugador tendrá su ataque
+    } else {
+        pjCreado.ataques = [];
+        console.warn("No se encontró el ataque inicial para el jugador 1.");
+    }
 
     // Reemplazarlo completamente
     jugadores[index] = pjCreado;
@@ -476,7 +492,7 @@ const jugadores = [
         experiencia: 0,
         puntosDisponibles: 0,
 
-        ataquesAprendidosNum: [2, 5],
+        ataquesAprendidosNum: [2, 5, 9],
         inventario: [1, 1],
         armaEquipadx: [3],
         armaduraEquipadx: [],
@@ -513,6 +529,7 @@ function crearEnemigo(datos) {
 
         img: datos.img,
         imgIcono: datos.imgIcono,
+        imgMuerto: datos.imgMuerto,
         imgIconoMuerto: datos.imgIconoMuerto,
         imgIconoEnvenenado: datos.imgIconoEnvenenado,
 
@@ -533,8 +550,8 @@ const enemigos = [
         nombre: "Goblin",
         clase: "guerrero",
         nivel: 1,
-        pv: 8,
-        pvMax: 8,
+        pv: 12,
+        pvMax: 12,
         pm: 0,
         pmMax: 0,
         fuerza: 2,
@@ -543,6 +560,7 @@ const enemigos = [
         defensaMagica: 0,
         velocidad: 1,
         img: "imgs/goblinPalo.png",
+        imgMuerto: "imgs/goblinPaloMuerto.png",
         imgIcono: "imgs/iconos/goblinIcono.png",
         ataquesAprendidosNum: [3]
     }),
@@ -552,16 +570,17 @@ const enemigos = [
         nombre: "Goblin",
         clase: "guerrero",
         nivel: 2,
-        pv: 11,
-        pvMax: 11,
+        pv: 16,
+        pvMax: 16,
         pm: 0,
         pmMax: 0,
-        fuerza: 2,
+        fuerza: 3,
         poderMagico: 0,
         defensa: 2,
         defensaMagica: 0,
         velocidad: 2,
         img: "imgs/goblinPalo.png",
+        imgMuerto: "imgs/goblinPaloMuerto.png",
         imgIcono: "imgs/iconos/goblinIcono.png",
         ataquesAprendidosNum: [3]
     }),
@@ -571,8 +590,8 @@ const enemigos = [
         nombre: "Bruja",
         clase: "hechicero",
         nivel: 1,
-        pv: 8,
-        pvMax: 8,
+        pv: 10,
+        pvMax: 10,
         pm: 15,
         pmMax: 15,
         fuerza: 1,
@@ -581,8 +600,9 @@ const enemigos = [
         defensaMagica: 1,
         velocidad: 2,
         img: "imgs/brujaNormal.png",
+        imgMuerto: "imgs/brujaNormalMuerto.png",
         imgIcono: "imgs/iconos/brujaNormalIcono.png",
-        ataquesAprendidosNum: [1, 4, 6]
+        ataquesAprendidosNum: [9]
     })
 ];
 
@@ -592,7 +612,7 @@ const enemigos = [
 // ======================================================================
 jugadores[0].activo = true;
 jugadores[1].activo = false;
-jugadores[2].activo = false;
+jugadores[2].activo = true;
 
 // -------------------------------------------------------------------------------------------------------------------------------------
 
@@ -698,6 +718,12 @@ const puntosPorNivel = {
     10: 2
 };
 
+// IMPORTANTE
+const datosJugador1 = JSON.parse(localStorage.getItem("jugadorCreado"));
+if (datosJugador1) {
+    actualizarJugador1ConDatosCreacion(datosJugador1);
+}
+
 // ======================================================================
 // ESTADOS DEL JUGADOR
 // ======================================================================
@@ -710,12 +736,6 @@ const estados = [
     { id: 6, nombre: "quemado" },
     { id: 7, nombre: "dormido" }
 ];
-
-// IMPORTANTE
-const datosJugador1 = JSON.parse(localStorage.getItem("jugadorCreado"));
-if (datosJugador1) {
-    actualizarJugador1ConDatosCreacion(datosJugador1);
-}
 
 // Buscar un estado por id
 function obtenerEstadoPorId(id) {
@@ -953,10 +973,10 @@ function valorSiSube(personaje, stat) {
     return total;
 }
 
-//------------------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------------------------------------------
 
 // ==========================================================
-// ITEMS
+// ITEMS_LISTA
 // ==========================================================
 const items = [
     {
@@ -2115,7 +2135,7 @@ function calcularBonosEquipamientoConRango(jugador) {
 }
 
 // =====================================================
-// MOSTRAR ESTADÍSTICAS EN PÁGINA HABILIDADES (CON RANGOS)
+// MOSTRAR ESTADÍSTICAS EN PÁGINA DE PERFIL:
 // =====================================================
 
 function mostrarEstadisticasDelSeleccionado() {
@@ -3420,34 +3440,13 @@ function actualizarTarjetaJugador(jugador) {
     }
 }
 
-
-
 // ======================================================================
 // BOTÓN DE CERRAR POPUP
 // ======================================================================
 const btnCerrar = document.getElementById("btnCerrarPopupCuracion");
 if (btnCerrar) btnCerrar.onclick = () => cerrarPopupCuracion();
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//-------------------------------------------------------------------------------------------------------------------
+//---------------------------------------------------------------------------------------------------------------------------
 
 // =====================================================
 // SOLAPA EXPERIENCIA
@@ -3831,18 +3830,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 });
 
-
-
-
-
-
-
-
-
-
-
-
-
 // =====================================================
 // BOTON PARA SALIR de "INFO JUGADOR"
 // =====================================================
@@ -3856,7 +3843,6 @@ btnPaginaStatus.addEventListener("click", () => {
 
 //---------------------------------------------------------------------------------------------------------------------------------------
 // PAGINA FORMACION:
-
 
 // ================================================
 // POSICIONES DE FORMACION (PERSISTENTES)
@@ -4043,9 +4029,7 @@ function generarEnemigosParaPiso(piso) {
         // clonar
         const nuevo = JSON.parse(JSON.stringify(base));
 
-        // ------------------------------
         // ⭐ NUEVA LÓGICA DE UBICACIÓN  
-        // ------------------------------
 
         nuevo.fila = 2; // SIEMPRE en la fila 2
 
@@ -4132,7 +4116,6 @@ function mostrarTarjetasJugadoresEnBatalla() {
     });
 }
 
-
 //------------------------------------------------------------------------------------------------------------------------------------
 function crearTablero() {
     const filas = 3;
@@ -4153,7 +4136,7 @@ function crearTablero() {
         }
     }
 
-    mostrarTarjetasJugadoresEnBatalla()
+    mostrarTarjetasJugadoresEnBatalla();
 }
 
 function colocarJugadoresEnTablero() {
@@ -4227,16 +4210,46 @@ function colocarEnemigosEnTablero() {
 
         if (!celda) return;
 
+        // asegurar que la celda permita overlays
+        if (getComputedStyle(celda).position === "static") {
+            celda.style.position = "relative";
+        }
+
+        // LIMPIAR CELDA antes de dibujar
+        celda.innerHTML = "";
+
+        // Crear imagen de enemigo (vivo o muerto)
         const img = document.createElement("img");
+
+        // Usar sprite normal o muerto según corresponda
         img.src = e.img;
         img.className = "imgPersonaje";
 
-        // Para asegurar que los enemigos queden detrás o delante si querés ordenar por fila
+        // Enemigo muerto: agregar clase opcional
+        if (e.muerto) {
+            img.classList.add("enemigo-muerto");
+        }
+
+        // Render por capas según la fila
         img.style.zIndex = 10 + filaTab;
 
-        // Vaciar celda primero (aunque no debería haber nada)
-        celda.innerHTML = "";
         celda.appendChild(img);
+
+        // ================================
+        // Actualizar posicionesEnPelea
+        // ================================
+        if (typeof posicionesEnPelea !== "object" || posicionesEnPelea === null) {
+            posicionesEnPelea = {};
+        }
+
+        // Mantener SIEMPRE la posición del enemigo, incluso muerto
+        posicionesEnPelea[`enemy_${e.id}`] = {
+            fila: Number(e.fila),
+            col: Number(e.col),
+            tipo: "enemigo",
+            id: e.id,
+            muerto: e.muerto
+        };
     });
 }
 
@@ -4245,9 +4258,9 @@ function colocarEnemigosEnTablero() {
 
 function calcularOrdenTurnos(jugadores, enemigos) {
 
-    // 1. Obtener jugadores activos
+    // 1. Jugadores activos y vivos
     const jugadoresActivos = jugadores
-        .filter(j => j.activo)
+        .filter(j => j.activo && !j.muerto)
         .map(j => ({
             tipo: "jugador",
             velocidad: Number(j.velocidad) || 0,
@@ -4255,20 +4268,20 @@ function calcularOrdenTurnos(jugadores, enemigos) {
             id: j.id
         }));
 
-    // 2. Obtener enemigos del combate actual
-    const enemigosActivos = enemigos.map(e => ({
-        tipo: "enemigo",
-        velocidad: Number(e.velocidad) || 0,
-        imgIcono: e.imgIcono,
-        id: e.id
-    }));
+    // 2. Enemigos vivos
+    const enemigosActivos = enemigos
+        .filter(e => !e.muerto)     // <-- NUEVO: filtrar muertos
+        .map(e => ({
+            tipo: "enemigo",
+            velocidad: Number(e.velocidad) || 0,
+            imgIcono: e.imgIcono,
+            id: e.id
+        }));
 
     // 3. Unir listas
     const todos = [...jugadoresActivos, ...enemigosActivos];
 
-    // 4. Ordenar:
-    //    - Primero mayor velocidad
-    //    - Si velocidad es igual → jugador antes que enemigo
+    // 4. Ordenar por velocidad y prioridad jugador
     todos.sort((a, b) => {
 
         // Orden por velocidad
@@ -4311,7 +4324,7 @@ function eliminarIconoTurnoActual() {
     }
 }
 
-//----------------------------------------------------------------------------------------------------------
+//---------------------------------------------------------------------------------------------------------------------------
 // TURNOS:
 //------------------------------
 
@@ -4351,10 +4364,18 @@ function iniciarPelea() {
 
 // Saber si es turno de un jugador:
 function obtenerEntidadEnTurno() {
-    // ahora el primer elemento de la cola es quien actúa
-    return ordenTurnos && ordenTurnos.length ? ordenTurnos[0] : null;
-}
+    if (!ordenTurnos || ordenTurnos.length === 0) return null;
+    const entry = ordenTurnos[indiceTurno];
+    if (!entry) return null;
 
+    // entry tiene forma { tipo: "jugador"|"enemigo", id: ... }
+    if (entry.tipo === "jugador") {
+        return jugadores.find(j => j.id === entry.id) || null;
+    } else {
+        // buscar en enemigosActuales (estado real de batalla)
+        return enemigosActuales.find(e => e.id === entry.id) || null;
+    }
+}
 
 function esTurnoJugador() {
     return obtenerEntidadEnTurno()?.tipo === "jugador";
@@ -4397,7 +4418,8 @@ function ejecutarTurnoActual() {
 
         // Ejecutar IA (con pequeño delay para sensación de turno)
         setTimeout(() => {
-            moverEnemigoIA(entidad.id);
+            turnoEnemigo(entidad.id);
+            guardarUbicaciones(); // Luego de que el enemigo se mueve > Guarda la ubicacion del turno.
 
             // Después de la acción del enemigo, avanzamos el turno
             avanzarTurno();
@@ -4405,16 +4427,24 @@ function ejecutarTurnoActual() {
     }
 }
 
+function eliminarEnemigoDeTurnos(idEnemigo) {
+    if (!ordenTurnos) return;
+
+    ordenTurnos = ordenTurnos.filter(e => e.id !== idEnemigo);
+}
+
 // Cuando se apreta el boton ACABAR TURNO:
 document.getElementById("btnAcabarTurno").addEventListener("click", () => {
     if (!esTurnoJugador()) return;
 
+    guardarUbicaciones(); // Cuando el usuario apreta el boton "Acabar Turno" > Guarda la ubicacion del turno.
     avanzarTurno();
 });
 
 // Iniciar NUEVA RONDA
 function iniciarNuevaRonda() {
     numeroRonda++;
+    console.log(`== Ronda ${numeroRonda} ==`);
 
     const textoRonda = document.getElementById("rondaTexto");
     if (textoRonda) {
@@ -4552,8 +4582,8 @@ function finalizarMovimiento(seMovio) {
     document.removeEventListener("click", cancelarMovimientoClickFuera, true);
 
     if (seMovio) {
-        // Bloquear botón mover
-        document.getElementById("btnMover").disabled = true;
+        document.getElementById("btnMover").disabled = true; // Deshabilita el botón MOVER porque ya lo usó.
+        guardarUbicaciones(); // Cuando el usuario apreta el boton en el nuevo casillero > Guarda la ubicacion del turno.
     }
 }
 
@@ -4563,6 +4593,12 @@ function finalizarMovimiento(seMovio) {
 function moverEnemigoIA(idEnemigo) {
     const enemigo = enemigosActuales.find(e => e.id === idEnemigo);
     if (!enemigo) return;
+        
+    if (enemigo.muerto) {
+        // Si el enemigo esta muerto > Pasa de turno.
+        pasarTurno();
+        return;
+    }
 
     // Buscar jugador más cercano
     let jugadorCercano = null;
@@ -4570,12 +4606,9 @@ function moverEnemigoIA(idEnemigo) {
 
     for (const j of jugadores) {
         if (!j.activo) continue;
-
         const posJ = posicionesEnPelea[j.id];
         if (!posJ) continue;
-
         const d = Math.abs(posJ.fila - enemigo.fila) + Math.abs(posJ.col - enemigo.col);
-
         if (d < mejorDist) {
             mejorDist = d;
             jugadorCercano = j;
@@ -4585,141 +4618,115 @@ function moverEnemigoIA(idEnemigo) {
     if (!jugadorCercano) return;
 
     const target = posicionesEnPelea[jugadorCercano.id];
+    if (!target) return;
+
     const distActual = Math.abs(target.fila - enemigo.fila) + Math.abs(target.col - enemigo.col);
 
-    // Si está a distancia 1: normalmente NO se mueve, excepto si es un hechicero (el hechicero debe intentar escapar).
+    // Helper para hacer render al final
+    let moved = false;
+
+    // Si está a distancia 1: normalmente NO se mueve, excepto hechicero
     if (distActual === 1) {
-        // permitir que los hechiceros sigan con su lógica de evasión
         const esHechicero = enemigo.clase && enemigo.clase.toString().toLowerCase() === "hechicero";
         if (!esHechicero) {
-            iniciarTablero();
-            colocarEnemigosEnTablero();
-            return;
+            // no mover; no render aquí, pero sí actualizar posicionesEnPelea por si hacía falta
+            posicionesEnPelea[`enemy_${enemigo.id}`] = { fila: Number(enemigo.fila), col: Number(enemigo.col) };
+            // no marcar moved (no change)
         }
-        // si es hechicero -> no retornamos aquí, dejamos que la lógica específica del hechicero intente moverlo fuera de la adyacencia.
+        // si es hechicero, seguir lógica abajo
     }
 
-    // ------------------------------------------------------------
-    // Hechicero Inteligente: mantiene distancia mínima, evita distancia 1,
-    // y si está arrinconado siempre intenta moverse a la mejor casilla posible
-    // ------------------------------------------------------------
+    // Hechicero (inteligente)
     if (enemigo.clase && enemigo.clase.toString().toLowerCase() === "hechicero") {
-
         const distanciaMinima = 2;
-
         const candidatos = [
-            { f: enemigo.fila, c: enemigo.col },         // quedarse
-            { f: enemigo.fila - 1, c: enemigo.col },     // arriba
-            { f: enemigo.fila + 1, c: enemigo.col },     // abajo
-            { f: enemigo.fila, c: enemigo.col - 1 },     // izq
-            { f: enemigo.fila, c: enemigo.col + 1 }      // der
+            { f: enemigo.fila, c: enemigo.col },
+            { f: enemigo.fila - 1, c: enemigo.col },
+            { f: enemigo.fila + 1, c: enemigo.col },
+            { f: enemigo.fila, c: enemigo.col - 1 },
+            { f: enemigo.fila, c: enemigo.col + 1 }
         ];
 
         const candidatosValidos = candidatos.filter(m => {
             const dentro = m.f >= 1 && m.f <= 3 && m.c >= 1 && m.c <= 7;
             if (!dentro) return false;
-
-            // Si es su propia casilla, siempre se permite
             if (m.f === enemigo.fila && m.c === enemigo.col) return true;
-
             return !estaOcupada(m.f, m.c);
         });
 
-        const target = posicionesEnPelea[jugadorCercano.id];
-        const distActual = Math.abs(target.fila - enemigo.fila) + Math.abs(target.col - enemigo.col);
-
-        // Evaluar todos
         const evaluados = candidatosValidos.map(m => {
             const dist = Math.abs(target.fila - m.f) + Math.abs(target.col - m.c);
             return { m, dist };
         });
 
-        // --------------------------------------------
-        // 1) Movimientos ideales: distancia >= mínima y sin quedar a 1
-        // --------------------------------------------
-        let ideales = evaluados.filter(o =>
-            o.dist >= distanciaMinima && o.dist !== 1
-        );
-
+        let ideales = evaluados.filter(o => o.dist >= distanciaMinima && o.dist !== 1);
         if (ideales.length > 0) {
             ideales.sort((a, b) => b.dist - a.dist);
             enemigo.fila = ideales[0].m.f;
             enemigo.col = ideales[0].m.c;
-            iniciarTablero();
-            colocarEnemigosEnTablero();
-            return;
+            moved = true;
+        } else {
+            let seguros = evaluados.filter(o => o.dist !== 1);
+            if (seguros.length > 0) {
+                seguros.sort((a, b) => b.dist - a.dist);
+                enemigo.fila = seguros[0].m.f;
+                enemigo.col = seguros[0].m.c;
+                moved = true;
+            } else {
+                evaluados.sort((a, b) => b.dist - a.dist);
+                if (evaluados.length) {
+                    enemigo.fila = evaluados[0].m.f;
+                    enemigo.col = evaluados[0].m.c;
+                    moved = true;
+                }
+            }
+        }
+    }
+
+    // Enemigos normales -> acercarse
+    if (!moved) {
+        const movimientos = [
+            { f: enemigo.fila - 1, c: enemigo.col },
+            { f: enemigo.fila + 1, c: enemigo.col },
+            { f: enemigo.fila, c: enemigo.col - 1 },
+            { f: enemigo.fila, c: enemigo.col + 1 }
+        ];
+
+        let mejorMovimiento = null;
+        let mejorDistFinal = distActual;
+
+        for (const m of movimientos) {
+            if (m.f < 1 || m.f > 3 || m.c < 1 || m.c > 7) continue;
+            if (estaOcupada(m.f, m.c)) continue;
+            const nuevaDist = Math.abs(target.fila - m.f) + Math.abs(target.col - m.c);
+            if (nuevaDist < mejorDistFinal) {
+                mejorDistFinal = nuevaDist;
+                mejorMovimiento = m;
+            }
         }
 
-        // --------------------------------------------
-        // 2) Movimientos seguros: evitar distancia 1 aunque no lleguen a la mínima
-        // --------------------------------------------
-        let seguros = evaluados.filter(o => o.dist !== 1);
-
-        if (seguros.length > 0) {
-            // Elegimos el que más distancia dé
-            seguros.sort((a, b) => b.dist - a.dist);
-            enemigo.fila = seguros[0].m.f;
-            enemigo.col = seguros[0].m.c;
-            iniciarTablero();
-            colocarEnemigosEnTablero();
-            return;
+        if (mejorMovimiento) {
+            enemigo.fila = mejorMovimiento.f;
+            enemigo.col = mejorMovimiento.c;
+            moved = true;
         }
+    }
 
-        // --------------------------------------------
-        // 3) Última opción (acorralado total):
-        //    TODAS las casillas permiten distancia 1
-        //    → Elegir la de mayor distancia igualmente (simula escape)
-        // --------------------------------------------
-        evaluados.sort((a, b) => b.dist - a.dist);
-        enemigo.fila = evaluados[0].m.f;
-        enemigo.col = evaluados[0].m.c;
+    // Render único si hubo cambio (o para garantizar sync de posiciones)
+    posicionesEnPelea[`enemy_${enemigo.id}`] = { fila: Number(enemigo.fila), col: Number(enemigo.col) };
 
+    if (moved) {
+        guardarUbicaciones();
         iniciarTablero();
         colocarEnemigosEnTablero();
-        return;
+    } else {
+        // aunque no se movió, aseguramos coord sincronizadas
+        guardarUbicaciones();
     }
-
-    // ============================================================
-    // 3) ENEMIGOS NORMALES → acercarse
-    // ============================================================
-    const movimientos = [
-        { f: enemigo.fila - 1, c: enemigo.col }, // arriba
-        { f: enemigo.fila + 1, c: enemigo.col }, // abajo
-        { f: enemigo.fila, c: enemigo.col - 1 }, // izquierda
-        { f: enemigo.fila, c: enemigo.col + 1 }  // derecha
-    ];
-
-    let mejorMovimiento = null;
-    let mejorDistFinal = distActual;
-
-    for (const m of movimientos) {
-        // dentro del tablero
-        if (m.f < 1 || m.f > 3 || m.c < 1 || m.c > 7) continue;
-
-        // evitar posiciones ocupadas
-        if (estaOcupada(m.f, m.c)) continue;
-
-        const nuevaDist = Math.abs(target.fila - m.f) + Math.abs(target.col - m.c);
-
-        // Elegir la casilla que acerque al jugador
-        if (nuevaDist < mejorDistFinal) {
-            mejorDistFinal = nuevaDist;
-            mejorMovimiento = m;
-        }
-    }
-
-    // Si encontró movimiento válido que acerque → moverse
-    if (mejorMovimiento) {
-        enemigo.fila = mejorMovimiento.f;
-        enemigo.col = mejorMovimiento.c;
-    }
-
-    iniciarTablero();
-    colocarEnemigosEnTablero();
 }
 
 //---------------------------------------------------------------------------------------------------
-// MENU DE ATACAR E ITEMS:
+// MENU 2 > ACCIONES (Boton Atacar y Boton Items):
 //---------------------------------------------------------------------------------------------------
 
 // Referencias a los dos menús
@@ -4741,6 +4748,1173 @@ btnRegresar.addEventListener("click", () => {
     miniMenu1.style.display = "grid";  // <-- respetamos el grid
 });
 
+//--------------------------------------------------------------------------------------------------------------------------------
+// Guarda la ubicacion de los jugadores y enemigos en TABLERO:
+//---------------------------------------------------------------------------------------------------
+
+function guardarUbicaciones() {
+    const nuevasPos = {};
+
+    jugadores.forEach(j => {
+        if (!j.activo) return;
+
+        const posAct = (typeof posicionesEnPelea !== "undefined" && posicionesEnPelea && posicionesEnPelea[j.id])
+            ? posicionesEnPelea[j.id]
+            : (posicionesFormacion && posicionesFormacion[j.id] ? posicionesFormacion[j.id] : null);
+
+        if (!posAct) return;
+
+        nuevasPos[j.id] = {
+            fila: Number(posAct.fila),
+            col: Number(posAct.col),
+            tipo: "jugador",
+            id: j.id,
+            nombre: j.nombre
+        };
+    });
+
+    enemigosActuales.forEach(e => {
+        if (e.muerto) return; // omitimos enemigos muertos
+        const key = `enemy_${e.id}`;
+        nuevasPos[key] = {
+            fila: Number(e.fila),
+            col: Number(e.col),
+            tipo: "enemigo",
+            id: e.id,
+            nombre: e.nombre
+        };
+    });
+
+    posicionesEnPelea = nuevasPos;
+}
+
+// Funcion para OBTENER la informacion de donde estan los jugadores y los enemigos:
+function obtenerTodasLasUbicaciones() {
+    return { ...posicionesEnPelea };
+}
+
+function mostrarUbicacionesEnConsola() {
+    const ubicaciones = obtenerTodasLasUbicaciones();
+
+    console.log("=== UBICACIONES ACTUALES EN EL TABLERO ===");
+
+    Object.values(ubicaciones).forEach(ent => {
+        const tipo = ent.tipo === "jugador" ? "Jugador" : "Enemigo";
+        console.log(`${tipo} ${ent.nombre} está en fila ${ent.fila}, columna ${ent.col}.`);
+    });
+}
+
+//---------------------------------------------------------------------------------------------------------
+// Se abre el "ventanaMostrarAtaques" para mostrar los ataques que puede hacer el jugador:
+
+// REFERENCIAS
+const fondoAtaques = document.getElementById("fondoAtaques");
+const ventanaAtaques = document.getElementById("ventanaMostrarAtaques");
+const divMostrarAtaques = document.getElementById("mostrarAtaques");
+const btnCancelarAtaque = document.getElementById("btnCancelarAtaque");
+const btnAtacar = document.getElementById("btnAtacar");
+
+
+// ================================================
+// ABRIR_POPUP_ATAQUES
+// ================================================
+btnAtacar.addEventListener("click", () => {
+
+    if (!esTurnoJugador()) return;
+
+    let entidadEnTurno = obtenerEntidadEnTurno();
+
+    if (entidadEnTurno?.id) {
+        const actualizado =
+            jugadores.find(j => j.id === entidadEnTurno.id) ||
+            enemigos.find(e => e.id === entidadEnTurno.id);
+
+        if (actualizado) entidadEnTurno = actualizado;
+    }
+
+    if (!entidadEnTurno || !Array.isArray(entidadEnTurno.ataques) || entidadEnTurno.ataques.length === 0) {
+        divMostrarAtaques.innerHTML = "<p>No tienes ataques aprendidos.</p>";
+    } else {
+
+        const puedeAtacarFisico = hayEnemigoAdyacente(entidadEnTurno.id);
+        const pmJugador = Number(entidadEnTurno.pm ?? 0);
+
+        divMostrarAtaques.innerHTML = `
+            <div id="listaOpcionesAtaques">
+                ${entidadEnTurno.ataques.map(a => {
+
+                    const pmNecesaria = Number(a.pmNecesaria ?? 0);
+
+                    let deshabilitado = "";
+                    let claseExtra = "";
+
+                    // Bloqueo mágico por PM insuficiente
+                    if (pmJugador < pmNecesaria) {
+                        deshabilitado = "data-disabled='1'";
+                        claseExtra = "ataqueDeshabilitado";
+                    }
+
+                    // Bloqueo físico si no hay enemigo cerca
+                    if (a.tipo.toLowerCase() === "fisico" && !puedeAtacarFisico) {
+                        deshabilitado = "data-disabled='1'";
+                        claseExtra = "ataqueDeshabilitado";
+                    }
+
+                    return `
+                        <div class="opcionAtaque ${claseExtra}" 
+                             data-id="${a.ataqueNum}" 
+                             data-pm="${pmNecesaria}"
+                             ${deshabilitado}>
+                            ${a.nombre} (PM: ${pmNecesaria})
+                        </div>
+                    `;
+                }).join("")}
+            </div>
+        `;
+    }
+
+    fondoAtaques.style.display = "flex";
+});
+
+// ================================================
+// CERRAR_POPUP_ATAQUES
+// ================================================
+function cerrarPopupAtaques() {
+    fondoAtaques.style.display = "none";
+}
+
+btnCancelarAtaque.addEventListener("click", cerrarPopupAtaques);
+
+// Clic afuera
+fondoAtaques.addEventListener("click", e => {
+    if (e.target === fondoAtaques) cerrarPopupAtaques();
+});
+
+// Cerrar con ESC
+document.addEventListener("keydown", e => {
+    if (e.key === "Escape") cerrarPopupAtaques();
+});
+
+//---------------------------------------------------------------------------------------------------------
+// Helpers para cuando haya ATAQUES:
+
+// calcularBonosEquipamiento(atacante):
+function calcularBonosEquipamiento(entidad) {
+    let bonusFuerza = 0;
+    let bonusMagia = 0;
+
+    const slots = [
+        "armaEquipadx",
+        "armaduraEquipadx",
+        "escudoEquipadx",
+        "cascoEquipadx",
+        "accesorioEquipadx"
+    ];
+
+    for (let slot of slots) {
+        if (!entidad[slot]) continue;
+
+        for (let itemId of entidad[slot]) {
+            const item = getItemById(itemId);
+            if (!item || !item.efecto) continue;
+
+            // Fuerza que puede ser un número o rango [min,max]
+            if (item.efecto.fuerza) {
+                if (Array.isArray(item.efecto.fuerza)) {
+                    const [min, max] = item.efecto.fuerza;
+                    bonusFuerza += Math.floor(Math.random() * (max - min + 1)) + min;
+                } else {
+                    bonusFuerza += item.efecto.fuerza;
+                }
+            }
+
+            // Poder mágico
+            if (item.efecto.poderMagico) {
+                bonusMagia += item.efecto.poderMagico;
+            }
+        }
+    }
+
+    return { bonusFuerza, bonusMagia };
+}
+
+// calcularDaño(atacante, defensor, ataque):
+function calcularDaño(atacante, defensor, ataque) {
+    // seguridad extrema: inputs
+    if (!ataque || !ataque.efecto) return 0;
+
+    const { bonusFuerza = 0, bonusMagia = 0 } = calcularBonosEquipamiento(atacante) || {};
+
+    const tipoAtaque = (ataque.tipo ?? "").toString().toLowerCase();
+    const dañoBase = Number(ataque.efecto.cantidad ?? 0);
+
+    const fuerzaAtq = Number(atacante?.fuerza ?? 0);
+    const poderAtq = Number(atacante?.poderMagico ?? 0);
+    const def = Number(defensor?.defensa ?? 0);
+    const defMag = Number(defensor?.defensaMagica ?? 0);
+
+    let statAtacante = 0;
+    let statDefensor = 0;
+
+    if (tipoAtaque === "fisico") {
+        statAtacante = fuerzaAtq + Number(bonusFuerza ?? 0);
+        statDefensor = def;
+    } else if (tipoAtaque === "magia") {
+        statAtacante = poderAtq + Number(bonusMagia ?? 0);
+        statDefensor = defMag;
+    } else {
+        return 0;
+    }
+
+    let dañoTotal = dañoBase + statAtacante - statDefensor;
+
+    if (!Number.isFinite(dañoTotal) || isNaN(dañoTotal)) dañoTotal = 0;
+    // piso mínimo 1 para que todo ataque haga algo, salvo casos especiales
+    if (dañoTotal < 1) dañoTotal = 1;
+
+    return Math.floor(dañoTotal);
+}
+
+// Verifica si hay enemigos cerca:
+function hayEnemigoAdyacente(jugadorId) {
+    if (!posicionesEnPelea) return false;
+
+    const posJugador = posicionesEnPelea[jugadorId];
+    if (!posJugador) return false;
+
+    const { fila: jf, col: jc } = posJugador;
+
+    // Buscar cualquier enemigo adyacente
+    for (const [key, ent] of Object.entries(posicionesEnPelea)) {
+        if (!key.startsWith("enemy_")) continue; // ignorar jugadores
+
+        const { fila: ef, col: ec } = ent;
+
+        const distancia = Math.abs(jf - ef) + Math.abs(jc - ec);
+        if (distancia === 1) return true;
+    }
+
+    return false;
+}
+
+function efectoDaño(idEntidad, tipo) {
+    let filaTab = null;
+    let colTab = null;
+
+    if (tipo === "jugador") {
+        const pos = posicionesEnPelea?.[idEntidad];
+        if (!pos) return;
+        filaTab = pos.fila - 1;
+        colTab = pos.col - 1;
+    } else {
+        // enemigo: buscar en enemigosActuales (tus enemigos usan e.fila/e.col)
+        const enemigo = enemigosActuales.find(e => e.id === idEntidad);
+        if (!enemigo) return;
+        filaTab = enemigo.fila - 1;
+        colTab = enemigo.col - 1;
+    }
+
+    const celda = document.querySelector(`.celdaGuerra[data-fila="${filaTab}"][data-columna="${colTab}"]`);
+    if (!celda) return;
+
+    // Asegurar position relative para overlay
+    if (getComputedStyle(celda).position === "static") {
+        celda.style.position = "relative";
+    }
+
+    // 1) Crear overlay (siempre visible aunque se reemplace el img)
+    const overlay = document.createElement("div");
+    overlay.className = "dañoOverlay";
+    // overlay va por encima del img; z-index alto
+    overlay.style.zIndex = 50;
+    celda.appendChild(overlay);
+
+    // remover overlay al terminar la animación
+    setTimeout(() => {
+        try { overlay.remove(); } catch (e) {}
+    }, 300);
+
+    // 2) Intentar también aplicar clase al img (visual extra) si existe
+    const img = celda.querySelector("img");
+    if (img) {
+        img.classList.remove("dano-hit");
+        void img.offsetWidth;
+        img.classList.add("dano-hit");
+    }
+}
+
+// Quitar clases y event listeners de selección
+function limpiarSeleccionObjetivos() {
+    for (const [key, pos] of Object.entries(posicionesEnPelea)) {
+        if (!key.startsWith("enemy_")) continue;
+
+        const celda = document.querySelector(`#celda_${pos.fila}_${pos.col}`);
+        if (!celda) continue;
+
+        celda.classList.remove("celda-target-enemigo-valido", "celda-target-enemigo-hover");
+
+        // Remover click handler
+        const handler = celda.dataset.clickHandler;
+        if (handler) {
+            celda.removeEventListener("click", handler);
+            delete celda.dataset.clickHandler;
+        }
+    }
+}
+
+// ================================================
+// INTEGRAR CON POPUP DE ATAQUES (Cuando el jugador elije un ataque)
+// ================================================
+divMostrarAtaques.addEventListener("click", e => {
+    const opcion = e.target.closest(".opcionAtaque");
+    if (!opcion) return;
+
+    e.stopPropagation();
+
+    // Bloqueado por PM o física
+    if (opcion.dataset.disabled === "1") return;
+
+    const idAtaque = Number(opcion.dataset.id);
+
+    const entidad = obtenerEntidadEnTurno();
+    const atacante = jugadores.find(j => j.id === entidad.id);
+
+    if (!atacante) return;
+
+    const ataque = atacante.ataques.find(a => a.ataqueNum === idAtaque);
+    if (!ataque) return console.error("Ataque no encontrado", idAtaque);
+
+    // VERIFICAR PM ANTES DE USAR
+    const pmJugador = Number(atacante.pm ?? 0);
+    const pmNecesaria = Number(ataque.pmNecesaria ?? 0);
+
+    if (pmJugador < pmNecesaria) {
+        console.warn("Intento de usar ataque sin PM suficientes.");
+        return;
+    }
+
+    cerrarPopupAtaques();
+
+    if (ataque.target === "Compañero") {
+        iniciarSeleccionObjetivoHechizoJugador(ataque);
+    } else {
+        iniciarSeleccionObjetivoAtaque(ataque);
+    }
+});
+
+// Añado un tiempo para que no se muestren los mensajes de consola tan rapido:
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+//--------------------------------------------------------------------------------------------------------------------------------
+// ATAQUES
+//------------------------------------------------
+function jugadorAtaca(jugador, enemigo, ataque) {
+    if (!jugador || !enemigo || !ataque) {
+        console.warn("jugadorAtaca: falta jugador/enemigo/ataque", { jugador, enemigo, ataque });
+        return;
+    }
+
+    // PM requerida
+    const pmNecesaria = Number(ataque.pmNecesaria ?? 0);
+    if (pmNecesaria > 0) {
+        jugador.pm = Number(jugador.pm ?? 0);
+        if (jugador.pm < pmNecesaria) {
+            console.log(`${jugador.nombre} no tiene PM suficientes (${jugador.pm}) para ${ataque.nombre}.`);
+            return;
+        }
+        jugador.pm -= pmNecesaria;
+    }
+
+    // Calcular daño
+    const daño = calcularDaño(jugador, enemigo, ataque);
+    const pvAntes = Number(enemigo.pv ?? 0);
+
+    enemigo.pv = pvAntes - Number(daño);
+    if (isNaN(enemigo.pv)) enemigo.pv = 0;
+
+    const pvDespues = Math.max(0, enemigo.pv);
+
+    // Log principal CORRECTO
+    console.log(`${jugador.nombre} le hizo ${daño} de daño a ${enemigo.nombre} y le queda ${pvDespues} PV.`);
+
+    // Verificar muerte
+    if (pvDespues <= 0) {
+        enemigo.pv = 0;
+        enemigo.muerto = true;
+        enemigo.estado = 2;
+
+        // Log de muerte
+        console.log(`${enemigo.nombre} ha sido derrotado.`);
+
+        // Sacarlo del sistema de turnos (si tu función existe)
+        if (typeof eliminarEnemigoDeTurnos === "function") {
+            eliminarEnemigoDeTurnos(enemigo.id);
+        }
+
+        // Cambiar sprite a muerto (si tu función existe)
+        if (typeof cambiarSpriteEnemigoMuerto === "function") {
+            cambiarSpriteEnemigoMuerto(enemigo.id);
+        }
+
+        // Limpiar selección si estaba atacándolo
+        if (typeof limpiarSeleccionObjetivosAtaque === "function") {
+            limpiarSeleccionObjetivosAtaque();
+        }
+    }
+
+    // Actualizar UI
+    if (typeof mostrarTarjetasJugadoresEnBatalla === "function") {
+        mostrarTarjetasJugadoresEnBatalla();
+    }
+}
+
+// ATAQUES QUE CURAN:
+// ==========================================================
+// SELECCIÓN DE OBJETIVO PARA HECHIZOS DE COMPAÑERO (Jugador)
+// ==========================================================
+let hechizoEnUso = null;
+
+function iniciarSeleccionObjetivoHechizoJugador(ataque) {
+
+    hechizoEnUso = ataque;
+
+    const entidadEnTurno = obtenerEntidadEnTurno();
+    const jugador = jugadores.find(j => j.id === entidadEnTurno.id);
+
+    if (!jugador) return;
+
+    // Compañeros válidos (solo vivos para curación)
+    let compañerosElegibles = jugadores.filter(j => j.activo);
+
+    if (compañerosElegibles.length === 0) {
+        console.warn("No hay compañeros elegibles para curar.");
+        hechizoEnUso = null;
+        return;
+    }
+
+    // Marcar celdas
+    compañerosElegibles.forEach(comp => {
+        const pos = posicionesEnPelea[comp.id];
+        if (!pos) return;
+
+        const filaTab = pos.fila - 1;
+        const colTab = pos.col - 1;
+
+        const celda = document.querySelector(
+            `.celdaGuerra[data-fila="${filaTab}"][data-columna="${colTab}"]`
+        );
+
+        if (celda) {
+            celda.classList.add("celda-target-HechizoCuracion-valido");
+            celda.dataset.targetId = comp.id;
+        }
+    });
+
+    const tablero = document.getElementById("tableroReal");
+
+    tablero.addEventListener("click", manejarClickObjetivoHechizo);
+    tablero.addEventListener("mouseover", manejarMouseOverObjetivoHechizo);
+    tablero.addEventListener("mouseout", manejarMouseOutObjetivoHechizo);
+}
+
+function manejarClickObjetivoHechizo(e) {
+    const celda = e.target.closest(".celda-target-HechizoCuracion-valido");
+    if (!celda) return;
+
+    const targetId = Number(celda.dataset.targetId);
+    const objetivo = jugadores.find(j => j.id === targetId);
+
+    if (!objetivo || !hechizoEnUso) return;
+
+    aplicarHechizoJugador(hechizoEnUso, objetivo);
+
+    limpiarSeleccionObjetivosHechizo();
+    avanzarTurno();
+}
+
+function manejarMouseOverObjetivoHechizo(e) {
+    const celda = e.target.closest(".celda-target-HechizoCuracion-valido");
+    if (celda) celda.classList.add("celda-target-HechizoCuracion-hover");
+}
+
+function manejarMouseOutObjetivoHechizo(e) {
+    const celda = e.target.closest(".celda-target-HechizoCuracion-valido");
+    if (celda) celda.classList.remove("celda-target-HechizoCuracion-hover");
+}
+
+function manejarMouseOutObjetivoHechizo(e) {
+    const celda = e.target.closest(".celda-target-HechizoCuracion-valido");
+    if (celda) celda.classList.remove("celda-target-HechizoCuracion-hover");
+}
+
+function manejarMouseOutObjetivoHechizo(e) {
+    const celda = e.target.closest(".celda-target-companero-valido");
+    if (celda) celda.classList.remove("celda-target-hover");
+}
+
+function aplicarHechizoJugador(ataque, objetivo) {
+
+    const entidadEnTurno = obtenerEntidadEnTurno();
+    const jugador = jugadores.find(j => j.id === entidadEnTurno.id);
+    if (!jugador) return;
+
+    jugador.pm = Number(jugador.pm ?? 0);
+    const costo = Number(ataque.pmNecesaria ?? 0);
+
+    if (jugador.pm < costo) {
+        console.warn(`${jugador.nombre} no tiene PM suficientes.`);
+        return;
+    }
+
+    // Descontar PM
+    jugador.pm -= costo;
+
+    // Fallo por precisión
+    if (Math.random() * 100 > ataque.precision) {
+        console.log(`${ataque.nombre} falló.`);
+        return;
+    }
+
+    // Aplicar efecto
+    switch (ataque.efecto.tipo) {
+
+        case "Curacion":
+            objetivo.pv = Math.min(objetivo.pvMax, objetivo.pv + ataque.efecto.cantidad);
+            break;
+
+        case "Revivir":
+            if (objetivo.estado === 2) {
+                objetivo.estado = 0;
+                objetivo.muerto = false;
+                objetivo.pv = ataque.efecto.cantidad;
+            }
+            break;
+
+        case "Estado":
+            objetivo.estado = ataque.efecto.estadoId;
+            break;
+    }
+
+    miniMenu2.style.display = "none";
+    miniMenu1.style.display = "grid";
+
+    if (typeof mostrarTarjetasJugadoresEnBatalla === "function") {
+        mostrarTarjetasJugadoresEnBatalla();
+    }
+}
+
+function limpiarSeleccionObjetivosHechizo() {
+
+    const tablero = document.getElementById("tableroReal");
+
+    tablero.removeEventListener("click", manejarClickObjetivoHechizo);
+    tablero.removeEventListener("mouseover", manejarMouseOverObjetivoHechizo);
+    tablero.removeEventListener("mouseout", manejarMouseOutObjetivoHechizo);
+
+    document.querySelectorAll(".celda-target-HechizoCuracion-valido").forEach(celda => {
+        celda.classList.remove("celda-target-HechizoCuracion-valido", "celda-target-HechizoCuracion-hover");
+        delete celda.dataset.targetId;
+    });
+
+    hechizoEnUso = null;
+}
+
+
+
+
+
+// ================================================
+// INICIAR SELECCIÓN DE ATAQUES PARA USAR VS ENEMIGO:
+// ================================================
+let handlerSeleccionAtaque = null;
+let ataqueEnUso = null;
+let ataqueSeleccionado = null;
+
+function iniciarSeleccionObjetivoAtaque(ataque) {
+    ataqueEnUso = ataque ?? (typeof ataqueEnUso !== "undefined" ? ataqueEnUso : null) ?? (window.ataqueSeleccionado ?? null);
+
+    if (!ataqueEnUso) {
+        console.warn("iniciarSeleccionObjetivoAtaque: ataque inválido o no seleccionado");
+        return;
+    }
+
+    // Remover cualquier handler previo / limpieza previa
+    limpiarSeleccionObjetivosAtaque();
+
+    // Enemigos válidos (vivos)
+    const enemigosElegibles = enemigosActuales.filter(e => Number(e.pv ?? 0) > 0);
+    if (enemigosElegibles.length === 0) {
+        console.warn("No hay enemigos válidos para atacar.");
+        ataqueEnUso = null;
+        return;
+    }
+
+    // Marcar celdas válidas para cada enemigo
+    enemigosElegibles.forEach(enemigo => {
+        const pos = posicionesEnPelea?.[`enemy_${enemigo.id}`] || { fila: enemigo.fila, col: enemigo.col };
+        if (!pos) return;
+
+        const fila = Number(pos.fila) - 1;
+        const col = Number(pos.col) - 1;
+        const celda = document.querySelector(`.celdaGuerra[data-fila="${fila}"][data-columna="${col}"]`);
+        if (!celda) return;
+
+        celda.classList.add("celda-target-enemigo-valido");
+        celda.dataset.targetId = enemigo.id;
+
+        celda.addEventListener("mouseenter", celda._hoverIn = () => {
+            celda.classList.add("celda-target-enemigo-hover");
+        });
+
+        celda.addEventListener("mouseleave", celda._hoverOut = () => {
+            celda.classList.remove("celda-target-enemigo-hover");
+        });
+    });
+
+    const tablero = document.getElementById("tableroReal");
+
+    // Asegurar que no hay otro handler viejo (doble attach)
+    if (handlerSeleccionAtaque) {
+        try { tablero.removeEventListener("click", handlerSeleccionAtaque); } catch (e) {}
+        handlerSeleccionAtaque = null;
+    }
+
+    // Handler estable
+    handlerSeleccionAtaque = function (e) {
+        const celda = e.target.closest(".celda-target-enemigo-valido");
+        if (!celda) return;
+
+        // Comprobaciones
+        if (!ataqueEnUso) {
+            console.error("Handler: ataqueEnUso perdido");
+            return;
+        }
+
+        const enemigoId = Number(celda.dataset.targetId);
+        const enemigo = enemigosActuales.find(en => en.id === enemigoId);
+        if (!enemigo) {
+            console.error("Handler: enemigo no encontrado id=", enemigoId);
+            return;
+        }
+
+        // Obtener el atacante REAL (si la entidad en turnos es jugador, usar jugadores; si enemigo, enemigosActuales)
+        const entidadEnTurno = obtenerEntidadEnTurno();
+        if (!entidadEnTurno) {
+            console.error("Handler: no hay entidad en turno");
+            return;
+        }
+
+        const atacante = entidadEnTurno.tipo === "jugador"
+            ? jugadores.find(j => j.id === entidadEnTurno.id)
+            : enemigosActuales.find(en => en.id === entidadEnTurno.id);
+
+        if (!atacante) {
+            console.error("Handler: atacante no encontrado", entidadEnTurno);
+            return;
+        }
+
+        // Aplicar daño segun quien ataca
+        if (entidadEnTurno.tipo === "jugador") {
+            jugadorAtaca(atacante, enemigo, ataqueEnUso);
+        } else {
+            const daño = calcularDaño(atacante, enemigo, ataqueEnUso);
+            enemigo.pv = Math.max(0, Number(enemigo.pv ?? 0) - Number(daño));
+            if (isNaN(enemigo.pv)) enemigo.pv = 0;
+            if (enemigo.pv <= 0) {
+                enemigo.pv = 0;
+                enemigo.muerto = true;
+                enemigo.estado = 2;
+            }
+        }
+
+        // Limpiar selección (remover listeners de selección)
+        limpiarSeleccionObjetivosAtaque();
+
+        // Sincronizar ubicaciones / estado
+        guardarUbicaciones();
+
+        // Re-render único y controlado
+        iniciarTablero();
+        colocarEnemigosEnTablero();
+
+        // EFECTO visual RESISTENTE a redibujado
+        efectoDaño(enemigo.id, "enemigo");
+
+        // Cerrar mini menus si es necesario (mantener UX actual)
+        try {
+            if (typeof miniMenu2 !== "undefined") miniMenu2.style.display = "none";
+            if (typeof miniMenu1 !== "undefined") miniMenu1.style.display = "grid";
+        } catch (err) {}
+
+        // Avanzar turno
+        avanzarTurno();
+    };
+
+    // Añadir escucha sobre tablero (un único listener global)
+    tablero.addEventListener("click", handlerSeleccionAtaque);
+}
+
+// ==========================================================
+// LIMPIAR SELECCIÓN DE OBJETIVOS
+// ==========================================================
+function limpiarSeleccionObjetivosAtaque() {
+    const tablero = document.getElementById("tableroReal");
+
+    // 1) Remover handler si existe
+    if (handlerSeleccionAtaque) {
+        try { tablero.removeEventListener("click", handlerSeleccionAtaque); } catch (e) {}
+        handlerSeleccionAtaque = null;
+    }
+
+    // 2) Limpiar celdas y listeners hover
+    document.querySelectorAll(".celda-target-enemigo-valido").forEach(celda => {
+        celda.classList.remove(
+            "celda-target-enemigo-valido",
+            "celda-target-enemigo-hover"
+        );
+
+        if (celda._hoverIn) {
+            try { celda.removeEventListener("mouseenter", celda._hoverIn); } catch (e) {}
+            delete celda._hoverIn;
+        }
+        if (celda._hoverOut) {
+            try { celda.removeEventListener("mouseleave", celda._hoverOut); } catch (e) {}
+            delete celda._hoverOut;
+        }
+
+        delete celda.dataset.targetId;
+    });
+}
+
+function enemigoAtaca(enemigo, jugador, ataque) {
+    // Evito tambien aca que si el enemigo esta muerto, no ataque y pase el turno.
+    if (!enemigo || enemigo.muerto) {
+        pasarTurno();
+        return;
+    }
+
+    const daño = calcularDaño(enemigo, jugador, ataque);
+    jugador.pv -= daño;
+
+    console.log(`${enemigo.nombre} ataca a ${jugador.nombre} por ${daño} de daño.`);
+}
+
+//-------------------------------------------------------------------------------------------------------------------------------------------
+// ATAQUES DE LA IA:
+
+// IA ataca y devuelve una promesa
+function turnoEnemigo(idEnemigo) {
+    return new Promise(resolve => {
+        const enemigo = enemigosActuales.find(e => e.id === idEnemigo);
+        if (!enemigo) { resolve(); return; }
+
+        const posEnemigo = posicionesEnPelea[`enemy_${enemigo.id}`] || {fila: enemigo.fila, col: enemigo.col};
+
+        let jugadoresATiro = jugadores.filter(j => {
+            if (!j.activo) return false;
+            const posJ = posicionesEnPelea[j.id];
+            if (!posJ) return false;
+            if (enemigo.clase.toLowerCase() === "guerrero") {
+                return Math.abs(posJ.fila - posEnemigo.fila) + Math.abs(posJ.col - posEnemigo.col) === 1;
+            }
+            return true;
+        });
+
+        if (jugadoresATiro.length === 0) {
+            moverEnemigoIA(enemigo.id);
+            jugadoresATiro = jugadores.filter(j => {
+                if (!j.activo) return false;
+                const posJ = posicionesEnPelea[j.id];
+                if (!posJ) return false;
+                if (enemigo.clase.toLowerCase() === "guerrero") {
+                    return Math.abs(posJ.fila - enemigo.fila) + Math.abs(posJ.col - enemigo.col) === 1;
+                }
+                return true;
+            });
+        }
+
+        if (jugadoresATiro.length > 0) {
+            const objetivo = jugadoresATiro[Math.floor(Math.random() * jugadoresATiro.length)];
+            const ataque = seleccionarAtaqueIA(enemigo);
+            const daño = calcularDaño(enemigo, objetivo, ataque);
+            objetivo.pv = Number(objetivo.pv) - Number(daño);
+            efectoDaño(objetivo.id, "jugador"); // EFECTO: jugador recibe daño
+        
+            if (isNaN(objetivo.pv)) objetivo.pv = 0;
+            if (objetivo.pv <= 0) {
+                objetivo.pv = 0;
+                objetivo.estado = 2;
+                objetivo.activo = false; // opcional, si querés marcar inactivo
+                console.log(`${objetivo.nombre} ha sido derrotado.`);
+            }
+        
+            console.log(`${enemigo.nombre} ataca a ${objetivo.nombre} por ${daño} de daño. (PV restantes: ${objetivo.pv})`);
+        
+            // ---------- ACTUALIZAR LA UI DE TARJETAS INMEDIATAMENTE ----------
+            if (typeof mostrarTarjetasJugadoresEnBatalla === "function") {
+                mostrarTarjetasJugadoresEnBatalla();
+            }
+        }        
+
+        guardarUbicaciones();
+
+        // Simular tiempo de animación antes de avanzar turno
+        setTimeout(resolve, 300);
+    });
+}
+
+// Ejecutar turno actual de forma async para sincronizar
+async function ejecutarTurnoActual() {
+    const entidad = obtenerEntidadEnTurno();
+    if (!entidad) return;
+
+    if (entidad.tipo === "jugador") {
+        document.getElementById("btnMover").disabled = false;
+        document.getElementById("btnAcabarTurno").disabled = false;
+    } else {
+        document.getElementById("btnMover").disabled = true;
+        document.getElementById("btnAcabarTurno").disabled = true;
+
+        // Esperar que la IA termine su turno antes de avanzar
+        await turnoEnemigo(entidad.id);
+        avanzarTurno();
+    }
+}
+
+// Ataques que decide usar la IA:
+function seleccionarAtaqueIA(enemigo) {
+    const disponibles = enemigo.ataques.filter(a => a.pmNecesaria <= enemigo.pm);
+    if (!disponibles.length) return enemigo.ataques[0]; // fallback
+    return disponibles[Math.floor(Math.random() * disponibles.length)];
+}
+
+// Añade el SPRITE de cuando muere el enemigo.
+function cambiarSpriteEnemigoMuerto(idEnemigo) {
+    const enemigo = enemigosActuales.find(e => e.id === idEnemigo);
+    if (!enemigo) return;
+
+    // Enemigo ya está marcado como muerto en jugadorAtaca
+
+    // 1. Cambiar SPRITE en posiciones del tablero
+    enemigo.img = enemigo.imgMuerto;
+
+    // 2. Cambiar ICONO para tarjetas de estado
+    if (enemigo.imgIconoMuerto)
+        enemigo.imgIcono = enemigo.imgIconoMuerto;
+
+    // 3. Forzar re-render de enemigos
+    colocarEnemigosEnTablero();
+
+    // 4. Forzar actualización de tarjetas
+    if (typeof mostrarTarjetasJugadoresEnBatalla === "function") {
+        mostrarTarjetasJugadoresEnBatalla();
+    }
+}
+
+
+
+//-------------------------------------------------------------------------------------------------------------------------------------------
+// ITEMS_EN_BATALLA
+//------------------------------------------------
+
+// Elementos del menú de ítems
+const btnUsarItem = document.getElementById("btnUsarItem");
+const fondoItems = document.getElementById("fondoItems");
+const divMostrarItems = document.getElementById("mostrarItems");
+const btnCancelarItems = document.getElementById("btnCancelarItems");
+const ventanaMostrarItems = document.getElementById("ventanaMostrarItems");
+
+// ==========================================================
+// FILTRA los items consumibles de batalla
+// ==========================================================
+function filtrarItemsBatalla(jugador) {
+    // Asegurarse que el inventario sea un array
+    const inventario = Array.isArray(jugador.inventario) ? jugador.inventario : [];
+
+    // Contar ocurrencias de cada item en el inventario
+    const conteoItems = inventario.reduce((acc, itemId) => {
+        acc[itemId] = (acc[itemId] || 0) + 1;
+        return acc;
+    }, {});
+
+    // Crear la lista final de objetos item con su cantidad
+    const itemsUnicos = Object.keys(conteoItems)
+        .map(itemId => getItemById(parseInt(itemId)))
+        .filter(item => item && (item.tipo || "").toString().trim().toLowerCase() === "itembatalla")
+        .map(item => ({
+            ...item,
+            cantidad: conteoItems[item.itemId]
+        }));
+
+    return itemsUnicos;
+}
+
+// ================================================
+// ABRIR POPUP DE ÍTEMS (AJUSTADO PARA CSS #listaOpcionesItems)
+// ================================================
+btnUsarItem.addEventListener("click", () => {
+    // 🔥 Necesitas una función esTurnoJugador() y obtenerEntidadEnTurno()
+    // Asumo que ya están definidas en otra parte de tu código.
+    // También asumo que 'jugadores' y 'enemigos' son globales.
+    if (!esTurnoJugador()) return;
+
+    // Asegurar que obtenemos la entidad ACTUALIZADA (lógica copiada del btnAtacar)
+    let entidadEnTurno = obtenerEntidadEnTurno();
+    if (entidadEnTurno?.id) {
+        const actualizado = jugadores.find(j => j.id === entidadEnTurno.id);
+        // Si es un jugador y se encontró, actualizamos la referencia
+        if (actualizado) entidadEnTurno = actualizado;
+    }
+
+    if (!entidadEnTurno) return;
+
+    // 1. Obtener los ítems de batalla del jugador
+    const itemsDeBatalla = filtrarItemsBatalla(entidadEnTurno);
+
+    // 2. Generar el HTML de la lista
+    if (itemsDeBatalla.length === 0) {
+        divMostrarItems.innerHTML = "<p>No tienes ítems de batalla.</p>";
+    } else {
+        // AÑADIMOS EL CONTENEDOR CON ID #listaOpcionesItems
+        divMostrarItems.innerHTML = `
+            <div id="listaOpcionesItems">
+                ${itemsDeBatalla.map(item => `
+                    <div class="opcionItem" data-id="${item.itemId}">
+                        ${item.nombre} (x${item.cantidad})
+                    </div>
+                `).join("")}
+            </div>
+        `;
+    }
+
+    // 3. Mostrar el popup
+    fondoItems.style.display = "flex";
+});
+
+// El resto de los listeners para cerrar el popup quedan igual:
+// Clic en el botón "Cancelar"
+btnCancelarItems.addEventListener("click", () => {
+    fondoItems.style.display = "none";
+});
+
+// Clic fuera de la ventana del popup
+fondoItems.addEventListener("click", (event) => {
+    if (event.target === fondoItems) {
+        fondoItems.style.display = "none";
+    }
+});
+
+// Manejo de clic en los ítems
+divMostrarItems.addEventListener("click", (event) => {
+    const opcionItem = event.target.closest(".opcionItem");
+    if (opcionItem) {
+        console.log(`Ítem seleccionado: ${opcionItem.dataset.id}`);
+        // Implementar aquí la lógica para usar el ítem y cerrar el popup si aplica.
+    }
+});
+
+// ================================================
+// CERRAR POPUP DE ÍTEMS
+// ================================================
+
+// 1. Clic en el botón "Cancelar"
+btnCancelarItems.addEventListener("click", () => {
+    fondoItems.style.display = "none";
+});
+
+// 2. Clic fuera de la ventana del popup
+fondoItems.addEventListener("click", (event) => {
+    // Si el clic ocurrió directamente en el fondo, no en la ventana interior.
+    if (event.target === fondoItems) {
+        fondoItems.style.display = "none";
+    }
+});
+
+// 3. Opcional: Clic en cualquier ítem de la lista (para futura implementación)
+// Puedes añadir un event listener aquí para la selección de ítems,
+// pero por ahora solo manejamos el cierre.
+// Manejo de clic en los ítems (MODIFICADO)
+divMostrarItems.addEventListener("click", (event) => {
+    const opcionItem = event.target.closest(".opcionItem");
+    if (opcionItem) {
+        const itemId = parseInt(opcionItem.dataset.id);
+        const item = getItemById(itemId);
+        
+        if (item && (item.target === "Compañero" || item.target === "Self")) {
+            // Si el ítem cura o afecta a compañeros (jugadores)
+            iniciarSeleccionObjetivo(item);
+        } else {
+            console.log(`Ítem seleccionado (ID: ${itemId}), pero no es de batalla de objetivo simple.`);
+            // Aquí iría la lógica para otros ítems (ej. los que afectan a enemigos)
+        }
+    }
+});
+
+// Variable global para almacenar el item seleccionado
+let itemEnUso = null; 
+
+// ==========================================================
+// FUNCIÓN PRINCIPAL PARA INICIAR LA SELECCIÓN DE OBJETIVO
+// ==========================================================
+function iniciarSeleccionObjetivo(item) {
+    // 1) Cerrar el popup de ítems
+    fondoItems.style.display = "none";
+
+    // Guardar el item que se va a usar
+    itemEnUso = item; 
+
+    // Obtener las entidades elegibles (solo compañeros activos/vivos)
+    const entidadesElegibles = jugadores.filter(j => j.activo && j.estado !== 2);
+    
+    // Si no hay objetivos válidos, cancelar
+    if (entidadesElegibles.length === 0) {
+        console.warn("No hay objetivos válidos para este ítem.");
+        itemEnUso = null;
+        return;
+    }
+
+    // 2) Marcar casilleros elegibles
+    entidadesElegibles.forEach(jugador => {
+        const pos = posicionesEnPelea[jugador.id];
+        if (!pos) return;
+
+        const filaTab = pos.fila - 1;
+        const colTab = pos.col - 1;
+        
+        const celda = document.querySelector(
+            `.celdaGuerra[data-fila="${filaTab}"][data-columna="${colTab}"]`
+        );
+
+        if (celda) {
+            celda.classList.add("celda-target-valido"); 
+            celda.dataset.targetId = jugador.id; // Guardar el ID del jugador en la celda
+        }
+    });
+
+    // 3) Configurar listeners de mouse para la selección
+    // Añadir listener de click global al tablero
+    document.getElementById("tableroReal").addEventListener("click", manejarClickObjetivo);
+    document.getElementById("tableroReal").addEventListener("mouseover", manejarMouseOverObjetivo);
+    document.getElementById("tableroReal").addEventListener("mouseout", manejarMouseOutObjetivo);
+}
+
+// ==========================================================
+// MANEJADORES DE EVENTOS DEL TABLERO
+// ==========================================================
+
+function limpiarSeleccionObjetivo() {
+    // Remover todas las clases de marcado y los listeners
+    document.querySelectorAll(".celdaGuerra").forEach(celda => {
+        celda.classList.remove("celda-target-valido", "celda-target-hover");
+        delete celda.dataset.targetId;
+    });
+
+    document.getElementById("tableroReal").removeEventListener("click", manejarClickObjetivo);
+    document.getElementById("tableroReal").removeEventListener("mouseover", manejarMouseOverObjetivo);
+    document.getElementById("tableroReal").removeEventListener("mouseout", manejarMouseOutObjetivo);
+
+    itemEnUso = null; // Limpiar el item en uso
+}
+
+function manejarMouseOverObjetivo(event) {
+    const celda = event.target.closest(".celdaGuerra");
+    if (celda && celda.classList.contains("celda-target-valido")) {
+        // ⭐ Añadir clase para hover (Verde Clarito)
+        celda.classList.add("celda-target-hover"); 
+    }
+}
+
+function manejarMouseOutObjetivo(event) {
+    const celda = event.target.closest(".celdaGuerra");
+    if (celda && celda.classList.contains("celda-target-valido")) {
+        celda.classList.remove("celda-target-hover");
+    }
+}
+
+function manejarClickObjetivo(event) {
+    const celda = event.target.closest(".celdaGuerra");
+    
+    // Verificar si se hizo clic en un objetivo válido
+    if (celda && celda.classList.contains("celda-target-valido") && celda.dataset.targetId) {
+        
+        const targetId = parseInt(celda.dataset.targetId);
+        const objetivo = jugadores.find(j => j.id === targetId);
+        
+        if (objetivo && itemEnUso) {
+            // Se encontró el objetivo: USAR ÍTEM
+            aplicarEfectoItem(itemEnUso, objetivo);
+            
+            // 4) Eliminar ítem del inventario
+            removerItemDeInventario(obtenerEntidadEnTurno().id, itemEnUso.itemId);
+
+            // 5) Actualizar UI
+            mostrarTarjetasJugadoresEnBatalla();
+            colocarJugadoresEnTablero(); // Para refrescar visualmente si es necesario
+
+            // Limpiar y terminar el proceso de selección
+            limpiarSeleccionObjetivo();
+
+            //6) Regresa al Div 1
+            miniMenu1.style.display = "grid";
+            miniMenu2.style.display = "none";
+
+            // 7) Terminar el turno
+            guardarUbicaciones(); 
+            avanzarTurno();
+        }
+    }
+}
+
+// ==========================================================
+// LÓGICA DE APLICACIÓN DE EFECTO DE ÍTEM
+// ==========================================================
+function aplicarEfectoItem(item, objetivo) {
+    if (!item.efecto || !objetivo) return;
+
+    switch (item.efecto.tipo) {
+        case "CurarPV":
+            // Asegurarse de no exceder el PV Máximo
+            objetivo.pv = Math.min(objetivo.pv + item.efecto.cantidad, objetivo.pvMax);
+            console.log(`${objetivo.nombre} ha sido curado por ${item.efecto.cantidad} PV.`);
+            // Puedes añadir aquí lógica de animación o mensaje flotante
+            break;
+        case "CurarPM":
+            // Asegurarse de no exceder el PM Máximo
+            objetivo.pm = Math.min(objetivo.pm + item.efecto.cantidad, objetivo.pmMax);
+            console.log(`${objetivo.nombre} ha recuperado ${item.efecto.cantidad} PM.`);
+            // Puedes añadir aquí lógica de animación o mensaje flotante
+            break;
+        // Agregar otros tipos de efectos de ítems aquí (ej. Curar Estado, Buffs)
+        default:
+            console.warn(`Tipo de efecto de ítem desconocido: ${item.efecto.tipo}`);
+    }
+}
+
+// =ATENCIÓN: Debes actualizar los arrays globales de jugadores/enemigos
+// para que reflejen los cambios de PV/PM.
+// El 'objetivo' recibido es una referencia directa al objeto en el array 'jugadores'.
+
+// ==========================================================
+// LÓGICA PARA REMOVER ÍTEM DEL INVENTARIO
+// ==========================================================
+function removerItemDeInventario(jugadorId, itemId) {
+    const jugador = jugadores.find(j => j.id === jugadorId);
+    if (!jugador || !jugador.inventario) return false;
+
+    // Buscar la posición del primer ítem con ese ID
+    const indice = jugador.inventario.findIndex(id => id === itemId);
+
+    if (indice !== -1) {
+        // Eliminar solo una ocurrencia
+        jugador.inventario.splice(indice, 1);
+        console.log(`Ítem ${itemId} removido del inventario de ${jugador.nombre}.`);
+        return true;
+    }
+
+    return false;
+}
 
 
 
@@ -4748,7 +5922,9 @@ btnRegresar.addEventListener("click", () => {
 
 
 
-//-----------------------------------------------------------------------
+
+
+//--------------------------------------------------------------------------------------------------------
 
 // Cuando acaba la pelea (ya sea que gana o huya):
 
@@ -4768,6 +5944,27 @@ function finalizarPelea(resultado) {
     if (contenedor) contenedor.innerHTML = "";
     ordenTurnos = [];
 }
+
+//--------------------------------------------------------------------------------------------------------------------------------
+// PAGINA_MERCADO:
+
+// ENTRAR AL MERCADO
+document.getElementById("btnPaginaMercado").addEventListener("click", () => {
+    document.getElementById("paginaPrincipal").style.display = "none";
+
+    const pagMercado = document.getElementById("paginaMercado");
+    pagMercado.style.display = "flex";
+    pagMercado.style.flexDirection = "column";   // por si querés que todo se ordene vertical
+   pagMercado.style.alignItems = "center";       // centrar horizontal
+});
+
+// SALIR DEL MERCADO
+document.getElementById("btnHome").addEventListener("click", () => {
+    document.getElementById("paginaMercado").style.display = "none";
+    document.getElementById("paginaPrincipal").style.display = "flex";
+});
+
+
 
 
 

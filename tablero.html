@@ -11,6 +11,9 @@
         <!-- Link a los Estilos en CSS -->
         <link rel="stylesheet" href="./Styles/tablero.css"/>
 
+        <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+
     </head>
 
     <body>
@@ -28,6 +31,12 @@
                     <span class="textoBoton">Info. Jugador</span>
                 </button>
 
+                <button id="btnPaginaMercado" class="bntPagDirecciones">
+                    <img src="/imgs/otras/iconoMercado.png" class="iconoBoton">
+                    <div class="lineaDivisoria"></div>
+                    <span class="textoBoton">Ir al Mercado</span>
+                </button>
+
                 <button id="btnPaginaFormacion" class="bntPagDirecciones">
                     <img src="/imgs/otras/iconoFormacion.png" class="iconoBoton">
                     <div class="lineaDivisoria"></div>
@@ -39,9 +48,34 @@
                     <div class="lineaDivisoria"></div>
                     <span class="textoBoton">Buscar Pelea</span>
                 </button>
+
+
             </div>
 
             <button id="btnTesteo">testeo</button>
+
+        </div>
+
+        <!-- PAGINA MERCADO -->
+        <div id="paginaMercado" style="display:none">
+
+            <div id="globoQueDeseas">
+                <button id="comprarItems">Comprar</button>
+                <button id="venderItems">Vender</button>
+            </div>
+
+            <div id="divContenedorItemsVendedor" style="display:none">
+                <div id="ItemsParaComprar"></div>
+                <div id="descripcionItemAComprar"></div>
+                <button id="comprarItemSeleccionado">Comprar</button>
+            </div>
+
+            <div id="divContenedorItemsJugador" style="display:none">
+                <div id="personajesDisponiblesAVender"></div>
+                <div id="ItemsParaVender"></div>
+            </div>    
+            
+            <button id="btnHome">Salir</button> 
 
         </div>
 
@@ -220,18 +254,26 @@
                 </div>
 
                 <div id="DivAccionTexto">
-                    <div id="textoDescriptivo"></div>
+                    <div id="textoDeAccion"></div>
                 </div>
             </div>
             
         </div>
 
         <!-- VENTANA EMERGENTE CON ATAQUES -->
-        <div id="ventanaMostrarAtaques" style="display:none">
-            
-            <div id="mostrarAtaques"></div>
-            <button id="btnCancelarAtaque">Cancelar</button>
-            
+        <div id="fondoAtaques" style="display:none;">
+            <div id="ventanaMostrarAtaques">
+                <div id="mostrarAtaques"></div>
+                <button id="btnCancelarAtaque">Cancelar</button>
+            </div>
+        </div>
+
+        <!-- VENTANA EMERGENTE CON ITEMS -->
+        <div id="fondoItems" style="display:none;">
+            <div id="ventanaMostrarItems">
+                <div id="mostrarItems"></div>
+                <button id="btnCancelarItems">Cancelar</button>
+            </div>
         </div>
 
         <!--POPUP PERFIL-->

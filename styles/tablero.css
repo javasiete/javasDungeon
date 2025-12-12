@@ -12,6 +12,7 @@ body {
     align-items: center;
     height: 100vh;
     margin: 0;
+    font-family: monospace;
 }
 
 button {
@@ -19,6 +20,7 @@ button {
     font-size: 18px;
     cursor: pointer; 
     border-radius: 5px;
+    font-family: "Cinzel", "Georgia", serif;
 }
 
 /*---------------------------------------------------------------------------------------------------------------------*/
@@ -36,6 +38,8 @@ button {
     display: flex;
     flex-direction: column;
     gap: 30px;
+
+    margin-bottom: 20px;
 }
 
 /* BOTÓN */
@@ -80,6 +84,10 @@ button {
     text-align: left; /* empieza desde la línea divisoria */
 }
 
+#btnTesteo {
+    background-color: rgb(248, 248, 163);
+}
+
 
 /*---------------------------------------------------------------------------------------------------------------------*/
 /*PAGINA STATUS*/
@@ -105,7 +113,6 @@ button {
 .solapa.activa {
     background-color: #fffd8b; /* ← mismo color que las cartas activas */
 }
-
 
 /* ============================= */
 /* LAYOUT GENERAL IZQ + DER */
@@ -195,8 +202,9 @@ button {
     padding-top: 10px;
 }
 
+/*-----------------------------------------------------------------------------------------------------------------------*/
 /* ============================= */
-/* CARTAS DE JUGADORES */
+/* CARTAS_JUGADORES */
 /* ============================= */
 
 .cartaJugador {
@@ -206,6 +214,7 @@ button {
 
     background-color: #fffd8ba4;
     border: 2px solid black;
+    
 
     cursor: pointer;
     margin: 0;
@@ -238,8 +247,9 @@ button {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    gap: 4px;
-    padding: 5px;
+    gap: 0px;
+    padding-left: 2px;
+    padding-right: 2px;    
 }
 
 /* Nombre left — Nivel right */
@@ -273,13 +283,14 @@ button {
 /* Texto de PV / PM */
 .labelStatus {
     text-align: left;
+    font-size: 16px;
 }
 
 /* Barra de vida/maná */
 .barraContenedor {
     width: 90px;
     height: 10px;
-    background-color: #4b2e12;
+    background-color: #4b123a;
     border: 1px solid black;
     border-radius: 3px;
     overflow: hidden;
@@ -296,7 +307,7 @@ button {
 }
 
 /* ============================= */
-/* TARJETA SELECCIONADA */
+/* CARTA_SELECCIONADA */
 /* ============================= */
 
 .cartaJugador.seleccionada {
@@ -304,13 +315,14 @@ button {
     border-top: 2px solid black;
     border-left: 2px solid black;
     border-bottom: 2px solid black;
-    border-right: none;
+    border-right: 2px solid transparent; /* mantiene ancho fijo */
     z-index: 3;
 }
 
+
 /*---------------------------------------------------------------------------------------------------------------------------------*/
 /* ============================= */
-/* TABLA PERFIL */
+/* PESTAÑA_PERFIL */
 /* ============================= */
 
 /* LO EQUIPADO */
@@ -347,7 +359,7 @@ button {
     box-sizing: border-box;
 }
 /*------------------------------------------------*/
-/*   TOOLTIP GENERAL REUTILIZABLE   */
+/* TOOLTIP GENERAL REUTILIZABLE */
 
 .tooltip {
     position: absolute;
@@ -365,7 +377,7 @@ button {
 }
 
 /*-----------------------------------------------------*/
-/* POPUP PERFIL */
+/* POPUP_PERFIL */
 
 #popupFondoHabilidades {
     position: fixed;
@@ -477,8 +489,8 @@ button {
     font-size: 18px;
 }
 
-/* -------------------------------------------- */
-/* CONTENEDOR */
+/* --------------------------------------------------------- */
+/* TABLA DE STATS */
 #contenedorDeTablaEst {
     border: 2px solid rgb(51, 25, 8);
     padding: 0px;
@@ -528,7 +540,10 @@ button {
 
 
 /*----------------------------------------------------------------------------------------------------------------*/
-/* TABLA DE HECHIZOS */
+/* ============================= */
+/* PESTAÑA_HECHIZOS */
+/* ============================= */
+
 .tablaHechizos {
     width: 100%;
     border-collapse: collapse;
@@ -590,8 +605,7 @@ button {
 }
 
 /*--------------------------------------------------------------------------------------------*/
-/*EFECTO CURACION*/
-
+/* EFECTO_CURACION */
 
 .contenedorEfectoCuracion {
     position: absolute;
@@ -631,7 +645,9 @@ button {
 }
 
 /*--------------------------------------------------------------------------------------------------*/
-/*PESTAÑA DE MEJORAS*/
+/* ============================= */
+/* PESTAÑA_MEJORAS */
+/* ============================= */
 
 .stat {
     display: grid;
@@ -720,8 +736,8 @@ button {
     font-weight: bold;
 }
 
-/*--------------------------------------*/
-/*POPUP MEJORAS*/
+/*------------------------------------------------------*/
+/* POPUP_MEJORAS */
 
 /* POPUP */
 #popupMejoras {
@@ -743,29 +759,19 @@ button {
     text-align: center;
 }
 
-/*-------------------------------------------------------------------------------------------------------------------*/
-/* ============================= */
+/*---------------------------------------------------------------------------------------------------------------------*/
 /* BOTÓN CERRAR */
-/* ============================= */
+
 #divBtnCerrarPaginaStatus {
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
-
-
-
-
-
-
-
-
-
-
-
 /*---------------------------------------------------------------------------------------------------------------------*/
-/*PAGINA TABLERO DE GUERRA*/
+/* ============================= */
+/* PAGINA_TABLERO_EN_BATALLA */
+/* ============================= */
 
 #paginaTablero {
     display: flex;
@@ -773,12 +779,11 @@ button {
     align-items: center;
     text-align: center;
     background-color: transparent;
-    
 }
 
 /*--------------------------------------------*/
-
 /* LAYOUT PRINCIPAL DE BATALLA */
+
 #pantallaPrincipalPelea {
     width: 860px;
     height: 430px;
@@ -798,7 +803,6 @@ button {
 
 /* COLUMNA DE TURNOS */
 #divTurnos {
-    background-color: #a18833;
     width: 100%;
     height: 100%;
     display: flex;
@@ -806,6 +810,9 @@ button {
     align-items: center;
     padding: 0;
     position: relative; /* Necesario para posicionar la flecha dentro de este bloque */
+    color: white;
+    font-family: "Cinzel", "Georgia", serif;
+    font-weight: bolder;
 }
 
 /* 👇 Flecha fija apuntando al primer turno */
@@ -831,7 +838,8 @@ button {
     height: 100%;
     margin-bottom: 5px;
 
-    background-color: #4b2e12;
+    background: rgba(20,20,20,0.7);
+    border: 2px solid #444;
     border-radius: 5px;
     box-sizing: border-box;
     overflow: visible;
@@ -922,7 +930,7 @@ button {
 }
 
 /*----------------------------------------------------------------------/
-/*CARTAS de los jugadores*/
+/* CARTAS_JUGADORES_EN_BATALLA */
 
 #infoJugadoresEnBatalla {
     display: grid;
@@ -932,7 +940,6 @@ button {
     justify-content: start;
     margin-bottom: 10px;
 }
-
 
 .tarjeta-jugador {
     display: flex;
@@ -953,10 +960,12 @@ button {
 
 .info-jugador {
     flex: 1;
+    
 }
 
 .fila-texto {
-    font-size: 14px;
+    font-family: "Press Start 2P";
+    font-size: 12px;
     color: white;
     margin-bottom: 4px;
 }
@@ -1014,10 +1023,35 @@ button {
     background-size: cover;
 }
 
+#divAcciones button {
+    font-size: 15px;
+    font-weight: bold;
+}
+
+#divAcciones button:hover {
+    background-color: #d3d2d2;
+}
+
 /* Derecha: texto */
 #DivAccionTexto {
     width: 50%;
+    background-image: url("/imgs/tablero/papiro.png");
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    background-position: center;
+    padding: 25px 45px;
+}
+
+#textoDeAccion {
+    font-family: "Cinzel", "Georgia", serif;
     padding: 10px;
+    height: 80px;            /* FIJA altura (podés cambiarla) */
+    overflow-y: auto;        /* Aparece el scroll si se llena */
+    box-sizing: border-box;  /* Asegura que padding no rompa el tamaño */
+    color: black;
+    font-size: 14px;
+    background: rgba(255, 255, 255, 0.75); /* opcional para estética */
+    border-radius: 4px;      /* opcional */
 }
 
 /* ---- MENÚS ---- */
@@ -1051,6 +1085,33 @@ button {
     background-color: #f9f9f9;
 }
 
+.dañoOverlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255,0,0,0.25);
+    animation: dañoFlash 0.25s ease-out;
+    pointer-events: none;
+}
+
+@keyframes dañoFlash {
+    0%   { opacity: 0.9; }
+    50%  { opacity: 0.2; }
+    100% { opacity: 0; }
+}
+
+.dano-hit {
+    animation: hitFlash 0.18s linear 1;
+}
+
+@keyframes hitFlash {
+    0% { filter: brightness(1.8); }
+    50% { filter: brightness(1); }
+    100% { filter: brightness(1.6); }
+}
+
 
 
 
@@ -1069,11 +1130,167 @@ button {
 
 
 /*---------------------------------------------------------------------------------------------------------------------*/
-/*VENTANA EMERGENTE DE ATAQUES*/
+/* POPUP_ATAQUES_EN_BATALLA */
+
+/* Fondo oscuro del popup */
+#fondoAtaques {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5); /*background: rgba(0,0,0,0.65);*/
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 999;
+}
+
+/* Ventana del popup */
+#ventanaMostrarAtaques {
+    background: #fff;
+    padding: 20px;
+    border: 2px solid black;
+    width: 300px;
+    text-align: center;
+    box-sizing: border-box;
+}
+
+#listaOpcionesAtaques div,
+.popupAtaquesBotonCerrar {
+    padding: 8px 12px;
+    margin: 7px 0;
+    font-size: 18px; /*Tamaño Fuente dentro del POPUP*/
+    cursor: pointer;
+}
+
+#listaOpcionesAtaques div:hover,
+.popupAtaquesBotonCerrar:hover {
+    color: blue;
+    text-decoration: underline;
+}
+
+.opcionAtaque.ataqueDeshabilitado {
+    opacity: 0.4;
+    pointer-events: none;
+    filter: grayscale(100%);
+}
+
+/* Cuando el enemigo es atacable */
+.celda-enemigo-atacable {
+    background-color: rgba(224, 84, 65, 0.8);
+    cursor: pointer;
+}
+
+/* ✨ TITILEO AL RECIBIR DAÑO */
+.dano-hit {
+    animation: hitFlash 0.15s linear 3;
+}
+
+@keyframes hitFlash {
+    0%   { filter: brightness(1); }
+    50%  { filter: brightness(2.3); }
+    100% { filter: brightness(1); }
+}
+
+/* Estilo para las celdas elegibles (Amarillo Clarito) cuando se lanza HECHIZO DE CURACION */
+.celda-target-HechizoCuracion-valido {
+    /* Color muy claro que no opaque el personaje */
+    box-shadow: 0 0 10px 5px rgba(255, 255, 0, 0.4) inset; 
+    border: 2px solid yellow;
+    cursor: crosshair; /* Indica que es un objetivo seleccionable */
+}
+
+/* Estilo para cuando el cursor está sobre la celda elegible (Verde Clarito) cuando se lanza HECHIZO DE CURACION */
+.celda-target-HechizoCuracion-hover {
+    box-shadow: 0 0 10px 5px rgba(0, 255, 0, 0.6) inset !important; /* Más prominente */
+    border: 2px solid limegreen !important;
+}
 
 
 /*---------------------------------------------------------------------------------------------------------------------*/
-/*PAGINA FORMACION*/
+/* POPUP_ITEMS_EN_BATALLA */
+
+/* Fondo oscuro del popup */
+#fondoItems {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5); /*background: rgba(0,0,0,0.65);*/
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 999;
+}
+
+/* Ventana del popup */
+#ventanaMostrarItems {
+    background: #fff;
+    padding: 20px;
+    border: 2px solid black;
+    width: 300px;
+    text-align: center;
+    box-sizing: border-box;
+}
+
+/* Estilos para que los items parezcan clickeables */
+#listaOpcionesItems div {
+    padding: 8px 12px;
+    margin: 7px 0;
+    font-size: 18px; 
+    cursor: pointer;
+}
+
+/* Estilos de HOVER (azul y subrayado) */
+#listaOpcionesItems div:hover {
+    color: blue;
+    text-decoration: underline;
+}
+
+/* Estilo para las celdas elegibles (Amarillo Clarito) */
+.celda-target-valido {
+    /* Color muy claro que no opaque el personaje */
+    box-shadow: 0 0 10px 5px rgba(255, 255, 0, 0.4) inset; 
+    border: 2px solid yellow;
+    cursor: crosshair; /* Indica que es un objetivo seleccionable */
+}
+
+/* Estilo para cuando el cursor está sobre la celda elegible (Verde Clarito) */
+.celda-target-hover {
+    box-shadow: 0 0 10px 5px rgba(0, 255, 0, 0.6) inset !important; /* Más prominente */
+    border: 2px solid limegreen !important;
+}
+
+/* Asegúrate de que las imágenes no interfieran con el hover/click de la celda */
+.imgPersonaje {
+    pointer-events: none; /* Crucial para que el click detecte la celda y no la imagen */
+}
+
+
+.celda-target-enemigo-valido {
+    /* Color muy claro que no opaque el personaje */
+    box-shadow: 0 0 10px 5px rgba(255, 255, 0, 0.4) inset; 
+    border: 2px solid yellow;
+    cursor: crosshair; /* Indica que es un objetivo seleccionable */
+}
+
+.celda-target-enemigo-hover {
+    box-shadow: 0 0 10px 5px rgba(255, 0, 0, 0.6) inset !important; /* Más prominente */
+    border: 2px solid rgb(205, 50, 50) !important;
+}
+
+
+
+
+
+
+/*---------------------------------------------------------------------------------------------------------------------*/
+/* ============================= */
+/* PAGINA_FORMACION */
+/* ============================= */
+
 #paginaFormacion {
     display: flex;
     flex-direction: column;
@@ -1107,8 +1324,63 @@ button {
     transition: 0.2s;
 }
 
+/*-------------------------------------------------------------------------------------------------------------------*/
+/* ============================= */
+/* PAGINA_MERCADO */
+/* ============================= */
+
+#paginaMercado {
+    width: 950px;
+    height: 700px;
+
+    background-image: url("/imgs/otras/fondoMercado.png");
+    background-size: cover;         /* La imagen cubre todo el div */
+    background-position: center;    /* Centrada */
+    background-repeat: no-repeat;   /* No se repite */
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+}
+
+#globoQueDeseas {
+    background-color: #000;
+    display: flex;
+    gap: 45px;
+    margin-right: 400px;
+}
+
+#globoQueDeseas button {
+    font-size: 22px;
+    padding: 12px 18px;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    background: rgb(60, 130, 255);
+    color: white;
+    font-family: monospace;
+    transition: 0.2s;
+}
+
+#globoQueDeseas button:hover {
+    background: rgb(40, 110, 240);
+    transform: scale(1.05);
+}
+
+#btnHome {
+    margin-right: 400px;
+}
+
+
+
 
 /*------------------------------------------------------------------------------------------*/
+/* ============================= */
+/* MEDIAQUERIE TABLET*/
+/* ============================= */
+
 @media screen and (max-width: 768px) {
 
     /* ====== RESET PARA EVITAR MÁRGENES ====== */
